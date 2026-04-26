@@ -11,7 +11,7 @@ QuoteWise Development Team
 | 3 | Shiyelekeni, L | 224030698 | Lead Developer |
 | 4 | Halwoodi, PU | 225050390 | GitHub Manager |
 | 5 | Nghiiteka, NH | 224048007 | Lead Assistant Manager |
-| 6 | Handura, BK | 225153238 | Firebase |
+| 6 | Handura, BK | 225153238 | Fire Base Lead |
 | 7 | Kambonde, LS | 225095211 | Documentation Assistant |
 | 8 | Kandjimwena, DPT | 225072572 | UI/UX Assistant |
 | 9  | Oliveira, I | 225109611 | Project Manager |
