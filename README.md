@@ -17,7 +17,7 @@ QuoteWise Development Team
 | 9  | Oliveira, I | 225109611 | Project Manager |
 | 10 | Shikage, VK | 225066866 | UI/UX Lead |
 | 11 | Shapwa, EKP | 222068841 | Firebase Lead |
-
+|  12|  Micheal Katuara| 224103806| UI/UX Lead|
 ## Engineering Domain
 Civil Engineering
 
