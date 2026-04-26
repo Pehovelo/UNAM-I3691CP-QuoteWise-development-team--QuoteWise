@@ -14,6 +14,9 @@ QuoteWise Development Team
 | 6 | Handura, BK | 225153238 | Firebase |
 | 7 | Kambonde, LS | 225095211 | Documentation Assistant |
 | 8 | Kandjimwena, DPT | 225072572 | UI/UX Assistant |
+| 9  | Oliveira, I | 225109611 | Project Manager |
+| 10 | Shikage, VK | 225066866 | UI/UX Lead |
+| 11 | Shapwa, EKP | 222068841 | Firebase Lead |
 
 ## Engineering Domain
 Civil Engineering
