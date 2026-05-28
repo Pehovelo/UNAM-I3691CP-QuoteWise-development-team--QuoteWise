@@ -1,0 +1,167 @@
+---
+name: Engineered Precision
+colors:
+  surface: '#fbf9f9'
+  surface-dim: '#dbdada'
+  surface-bright: '#fbf9f9'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f5f3f3'
+  surface-container: '#efeded'
+  surface-container-high: '#e9e8e8'
+  surface-container-highest: '#e4e2e2'
+  on-surface: '#1b1c1c'
+  on-surface-variant: '#5a4137'
+  inverse-surface: '#303031'
+  inverse-on-surface: '#f2f0f0'
+  outline: '#8f7065'
+  outline-variant: '#e3bfb1'
+  surface-tint: '#a53d00'
+  primary: '#a53d00'
+  on-primary: '#ffffff'
+  primary-container: '#ff6200'
+  on-primary-container: '#541b00'
+  inverse-primary: '#ffb597'
+  secondary: '#725c00'
+  on-secondary: '#ffffff'
+  secondary-container: '#fdd000'
+  on-secondary-container: '#6e5900'
+  tertiary: '#0061a2'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#009afc'
+  on-tertiary-container: '#003053'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#ffdbcd'
+  primary-fixed-dim: '#ffb597'
+  on-primary-fixed: '#360f00'
+  on-primary-fixed-variant: '#7e2c00'
+  secondary-fixed: '#ffe07c'
+  secondary-fixed-dim: '#ecc200'
+  on-secondary-fixed: '#231b00'
+  on-secondary-fixed-variant: '#564500'
+  tertiary-fixed: '#d1e4ff'
+  tertiary-fixed-dim: '#9dcaff'
+  on-tertiary-fixed: '#001d35'
+  on-tertiary-fixed-variant: '#00497c'
+  background: '#fbf9f9'
+  on-background: '#1b1c1c'
+  surface-variant: '#e4e2e2'
+typography:
+  display:
+    fontFamily: Newsreader
+    fontSize: 48px
+    fontWeight: '600'
+    lineHeight: 52px
+    letterSpacing: -0.02em
+  headline-lg:
+    fontFamily: Newsreader
+    fontSize: 32px
+    fontWeight: '600'
+    lineHeight: 40px
+    letterSpacing: -0.01em
+  headline-lg-mobile:
+    fontFamily: Newsreader
+    fontSize: 28px
+    fontWeight: '600'
+    lineHeight: 34px
+  headline-md:
+    fontFamily: Newsreader
+    fontSize: 24px
+    fontWeight: '500'
+    lineHeight: 32px
+  body-lg:
+    fontFamily: Geist
+    fontSize: 18px
+    fontWeight: '400'
+    lineHeight: 28px
+  body-md:
+    fontFamily: Geist
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+  label-md:
+    fontFamily: Geist
+    fontSize: 14px
+    fontWeight: '600'
+    lineHeight: 20px
+    letterSpacing: 0.02em
+  code:
+    fontFamily: Geist
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 20px
+rounded:
+  sm: 0.5rem
+  DEFAULT: 1rem
+  md: 1.5rem
+  lg: 2rem
+  xl: 3rem
+  full: 9999px
+spacing:
+  base: 4px
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 40px
+  margin-mobile: 20px
+  gutter: 12px
+---
+
+## Brand & Style
+
+This design system is built for a premium, engineering-focused mobile environment where technical rigor meets impeccable craftsmanship. The brand personality is authoritative yet energetic, balancing the "production-grade" feel of developer tools with the warmth of a high-end consumer product.
+
+The aesthetic direction is **Modern-Industrial Minimalism**. It rejects the generic, overly-smooth "AI aesthetic" in favor of high-contrast layouts, precise geometry, and tactical depth. The interface should feel like a physical instrument—solid, responsive, and reliable. To achieve this, we use a sophisticated off-white base to reduce eye strain, punctuated by high-energy orange accents and subtle film grain or noise textures to give digital surfaces a tangible, non-synthetic quality.
+
+## Colors
+
+The palette is anchored by a high-contrast relationship between the signature **#FF6200** orange and a refined **#FBF9F9** off-white background. This specific neutral hue removes the clinical harshness of pure white while maintaining maximum legibility.
+
+- **Primary:** #FF6200 is used for primary actions and critical status indicators.
+- **Gradients:** Use the orange-to-yellow gradient sparingly for hero sections, data visualizations, or background ornaments to inject energy.
+- **Neutrals:** Use a tiered scale of warm grays (e.g., #E8E4E4 for borders, #1A1A1A for primary text) to maintain the "engineered" look without appearing cold.
+- **Texture:** Apply a 2-3% monochromatic noise overlay on large background surfaces to create a premium, paper-like finish.
+
+## Typography
+
+The typography strategy leverages the tension between the literary, authoritative **Newsreader** and the technical, monolinear **Geist**.
+
+- **Newsreader** is reserved for headlines, quotes, and editorial moments. It provides a "human" and "premium" contrast to the data-heavy content.
+- **Geist** handles all functional UI, body text, and labels. Its precise, developer-centric construction reinforces the engineering focus of the application.
+- Use **tight letter-spacing** on headlines for a compact, editorial look, and **increased tracking** on Geist labels to improve legibility at small sizes.
+
+## Layout & Spacing
+
+This design system utilizes a **4px baseline grid** to ensure mathematical precision in all element placements. 
+
+- **Mobile Layout:** A 4-column fluid grid with 20px outside margins. 
+- **Rhythm:** Use 16px (md) as the default padding for containers and 24px (lg) to separate distinct content blocks.
+- **Density:** Maintain high information density typical of engineering tools, but use generous vertical whitespace between Newsreader headlines and Geist body text to preserve a "premium" feel.
+
+## Elevation & Depth
+
+Depth is achieved through **tonal layering** and **subtle tactile shadows** rather than dramatic blurs.
+
+- **Levels:** Surfaces are elevated using 1px borders in #E8E4E4 or by shifting the background to #FFFFFF (Pure White) against the #FBF9F9 base.
+- **Shadows:** Use extremely low-opacity (2-4%) black shadows with a tight blur radius to make cards feel like they are sitting millimeters off the surface. 
+- **Interaction:** On press, elements should visually "sink" by removing the shadow, reinforcing a mechanical button feel.
+
+## Shapes
+
+To balance the technical typography, the shape language uses **full roundedness (Pill-shaped)** for interactive elements.
+
+- **Buttons & Chips:** Must use the `ROUND_FULL` (32px+) treatment. This creates a distinct "touchable" contrast against the structured, rectangular layout of data and text.
+- **Cards:** Use `rounded-lg` (16px) or `rounded-xl` (24px) to contain content, ensuring a softer container for the high-contrast elements inside.
+- **Inputs:** Maintain the pill-shape for text fields to stay consistent with the primary action buttons.
+
+## Components
+
+- **Buttons:** Primary buttons use the #FF6200 background with white text and a full-pill radius. Use a subtle inner-shadow for a "pressed-in" look during active states.
+- **Chips/Badges:** Use Geist Bold for text within pill-shaped containers. For technical status, use a monochromatic border; for highlights, use the orange-to-yellow gradient.
+- **Input Fields:** Outlined pill-shaped containers with a 1.5px border. The border shifts to #FF6200 on focus. 
+- **Cards:** Cards should have no visible shadow by default, instead using a thin #E8E4E4 border. Use the noise texture on the card background to differentiate it from the primary app background.
+- **Navigation:** Use clear, sharp iconography paired with Geist labels. Active states are indicated by the primary #FF6200 orange.
+- **Data Displays:** Use Geist for all numbers and metrics, ensuring they feel "calculated" and precise.
