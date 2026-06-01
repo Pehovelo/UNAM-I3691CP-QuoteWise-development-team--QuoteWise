@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import colors from '../theme/colors';
 
 /**
@@ -20,6 +21,10 @@ export default function LoadingState({ message = 'Loading...' }) {
     </View>
   );
 }
+
+LoadingState.propTypes = {
+  message: PropTypes.string,
+};
 
 const styles = StyleSheet.create({
   container: {

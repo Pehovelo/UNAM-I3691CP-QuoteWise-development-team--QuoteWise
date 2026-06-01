@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
 import colors from '../theme/colors';
 
 /**
@@ -36,6 +37,12 @@ export default function Header({ title, onBack, rightAction }) {
     </View>
   );
 }
+
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+  onBack: PropTypes.func,
+  rightAction: PropTypes.node,
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
 import colors from '../theme/colors';
 
 /**
@@ -120,6 +121,17 @@ const QuotationCard = React.memo(function QuotationCard({ quotation, onPress }) 
     </Pressable>
   );
 });
+
+QuotationCard.propTypes = {
+  quotation: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    date: PropTypes.string,
+    status: PropTypes.string,
+    referenceNumber: PropTypes.string,
+  }).isRequired,
+  onPress: PropTypes.func.isRequired,
+};
 
 export default QuotationCard;
 

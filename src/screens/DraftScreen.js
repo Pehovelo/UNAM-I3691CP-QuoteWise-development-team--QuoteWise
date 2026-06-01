@@ -21,17 +21,19 @@ import LoadingState from '../components/LoadingState';
 import EmptyState from '../components/EmptyState';
 import { useQuotations } from '../context/QuotationContext';
 import colors from '../theme/colors';
+import ROUTES from '../constants/routes';
 
 export default function DraftScreen() {
   const navigation = useNavigation();
-  const { drafts, loading } = useQuotations();
+  const { drafts, loading, error } = useQuotations();
 
   const handleBack = () => {
     navigation.goBack();
   };
 
   const handleDraftPress = (quotation) => {
-    navigation.navigate('QuotationDetail', { quotation });
+    // P0 fix: pass ID instead of full object to avoid data leak via nav state
+    navigation.navigate(ROUTES.QUOTATION_DETAIL, { quotationId: quotation.id });
   };
 
   const handleNewDraft = () => {
@@ -58,7 +60,14 @@ export default function DraftScreen() {
     <SafeAreaView style={styles.safeArea}>
       <Header title="Drafts" onBack={handleBack} />
 
-      {drafts.length === 0 ? (
+      {/* Error state UI */}
+      {error ? (
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color={colors.error} />
+          <Text style={styles.errorTitle}>Something went wrong</Text>
+          <Text style={styles.errorMessage}>{error}</Text>
+        </View>
+      ) : drafts.length === 0 ? (
         <EmptyState
           icon="edit-note"
           title="No Drafts"
@@ -73,7 +82,7 @@ export default function DraftScreen() {
             data={drafts}
             renderItem={renderDraft}
             keyExtractor={(item) => item.id}
-            estimatedItemSize={72}
+            estimatedItemSize={90}
             contentContainerStyle={styles.listContent}
           />
         </View>
@@ -88,6 +97,7 @@ export default function DraftScreen() {
         ]}
         accessibilityRole="button"
         accessibilityLabel="Create new draft"
+        accessibilityHint="Start a new draft quotation"
       >
         <MaterialIcons name="add" size={24} color={colors.onPrimary} />
         <Text style={styles.fabLabel}>New Draft</Text>
@@ -115,6 +125,25 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 4,
   },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.error,
+    marginTop: 12,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: colors.onSurfaceVariant,
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 20,
+  },
   fab: {
     position: 'absolute',
     bottom: 24,
@@ -128,8 +157,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 6,
     minHeight: 44,
-    // Shadow
-    shadowColor: '#000',
+    // Shadow — uses theme token instead of hardcoded '#000'
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import Header from '../components/Header';
@@ -13,17 +14,19 @@ import LoadingState from '../components/LoadingState';
 import EmptyState from '../components/EmptyState';
 import { useQuotations } from '../context/QuotationContext';
 import colors from '../theme/colors';
+import ROUTES from '../constants/routes';
 
 export default function SavedQuotationsScreen() {
   const navigation = useNavigation();
-  const { savedQuotations, loading } = useQuotations();
+  const { savedQuotations, loading, error } = useQuotations();
 
   const handleBack = () => {
     navigation.goBack();
   };
 
   const handleQuotationPress = (quotation) => {
-    navigation.navigate('QuotationDetail', { quotation });
+    // Pass ID instead of full object to avoid data leak via nav state
+    navigation.navigate(ROUTES.QUOTATION_DETAIL, { quotationId: quotation.id });
   };
 
   const renderQuotation = ({ item }) => (
@@ -43,7 +46,14 @@ export default function SavedQuotationsScreen() {
     <SafeAreaView style={styles.safeArea}>
       <Header title="Saved Quotations" onBack={handleBack} />
 
-      {savedQuotations.length === 0 ? (
+      {/* Error state UI */}
+      {error ? (
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color={colors.error} />
+          <Text style={styles.errorTitle}>Something went wrong</Text>
+          <Text style={styles.errorMessage}>{error}</Text>
+        </View>
+      ) : savedQuotations.length === 0 ? (
         <EmptyState
           icon="bookmark-outline"
           title="No Saved Quotations"
@@ -58,7 +68,7 @@ export default function SavedQuotationsScreen() {
             data={savedQuotations}
             renderItem={renderQuotation}
             keyExtractor={(item) => item.id}
-            estimatedItemSize={72}
+            estimatedItemSize={90}
             contentContainerStyle={styles.listContent}
           />
         </View>
@@ -85,5 +95,24 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 4,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.error,
+    marginTop: 12,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: colors.onSurfaceVariant,
+    textAlign: 'center',
+    marginTop: 6,
+    lineHeight: 20,
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
 import colors from '../theme/colors';
 
 /**
@@ -36,6 +37,12 @@ export default function EmptyState({ icon = 'inbox', title, subtitle }) {
     </View>
   );
 }
+
+EmptyState.propTypes = {
+  icon: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string,
+};
 
 const styles = StyleSheet.create({
   container: {

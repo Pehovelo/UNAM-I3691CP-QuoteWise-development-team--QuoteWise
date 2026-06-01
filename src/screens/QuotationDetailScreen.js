@@ -18,6 +18,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Header from '../components/Header';
 import { useQuotations } from '../context/QuotationContext';
 import colors from '../theme/colors';
+import ROUTES from '../constants/routes';
 
 /**
  * Format a number as currency string.
@@ -34,8 +35,18 @@ function formatCurrency(amount, currency) {
 export default function QuotationDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { quotation } = route.params;
-  const { acceptQuotation, rejectQuotation, saveQuotation } = useQuotations();
+
+  // P0 fix: null-safe params + fetch from context by ID instead of passing full object
+  const { quotationId } = route.params ?? {};
+  const { quotations, acceptQuotation, rejectQuotation, saveQuotation } = useQuotations();
+
+  const quotation = quotations.find((q) => q.id === quotationId) ?? null;
+
+  // If quotation not found (bad navigation or stale ID), go back
+  if (!quotation) {
+    navigation.goBack();
+    return null;
+  }
 
   const handleBack = () => {
     navigation.goBack();

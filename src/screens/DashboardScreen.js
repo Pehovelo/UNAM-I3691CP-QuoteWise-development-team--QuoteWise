@@ -8,7 +8,6 @@ import {
   View,
   Text,
   Pressable,
-  ScrollView,
   StyleSheet,
   SafeAreaView,
   Alert,
@@ -18,6 +17,8 @@ import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { useQuotations } from '../context/QuotationContext';
 import colors from '../theme/colors';
+import ROUTES from '../constants/routes';
+import { withAlpha } from '../utils/color';
 
 const NAV_CARDS = [
   {
@@ -26,7 +27,8 @@ const NAV_CARDS = [
     icon: 'receipt-long',
     color: colors.primary,
     countKey: 'activeQuotations',
-    target: 'Quotations',
+    target: ROUTES.QUOTATIONS,
+    hint: 'View your active quotations',
   },
   {
     key: 'saved',
@@ -34,7 +36,8 @@ const NAV_CARDS = [
     icon: 'bookmark',
     color: colors.tertiary,
     countKey: 'savedQuotations',
-    target: 'SavedQuotations',
+    target: ROUTES.SAVED_QUOTATIONS,
+    hint: 'View your saved quotations',
   },
   {
     key: 'drafts',
@@ -42,7 +45,8 @@ const NAV_CARDS = [
     icon: 'edit-note',
     color: colors.secondary,
     countKey: 'drafts',
-    target: 'Drafts',
+    target: ROUTES.DRAFTS,
+    hint: 'View and manage your drafts',
   },
   {
     key: 'settings',
@@ -51,12 +55,13 @@ const NAV_CARDS = [
     color: colors.outline,
     countKey: null,
     target: null,
+    hint: 'Open app settings',
   },
 ];
 
 export default function DashboardScreen() {
   const navigation = useNavigation();
-  const { activeQuotations, savedQuotations, drafts } = useQuotations();
+  const { activeQuotations, savedQuotations, drafts, error } = useQuotations();
 
   const counts = {
     activeQuotations,
@@ -77,6 +82,7 @@ export default function DashboardScreen() {
       style={styles.avatarCircle}
       accessibilityRole="button"
       accessibilityLabel="User profile"
+      accessibilityHint="View your profile settings"
     >
       <MaterialIcons name="person" size={22} color={colors.primary} />
     </View>
@@ -85,11 +91,16 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header title="QuoteWise" rightAction={rightAction} />
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+
+      {/* Error banner */}
+      {error ? (
+        <View style={styles.errorBanner}>
+          <MaterialIcons name="error-outline" size={20} color={colors.error} />
+          <Text style={styles.errorText}>Failed to load data. Pull down to retry.</Text>
+        </View>
+      ) : null}
+
+      <View style={styles.content}>
         <View style={styles.grid}>
           {NAV_CARDS.map((card) => {
             const count = card.countKey ? counts[card.countKey].length : null;
@@ -105,8 +116,9 @@ export default function DashboardScreen() {
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={label}
+                accessibilityHint={card.hint}
               >
-                <View style={[styles.iconCircle, { backgroundColor: card.color + '14' }]}>
+                <View style={[styles.iconCircle, { backgroundColor: withAlpha(card.color, 0.08) }]}>
                   <MaterialIcons
                     name={card.icon}
                     size={32}
@@ -120,7 +132,7 @@ export default function DashboardScreen() {
             );
           })}
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -130,11 +142,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollView: {
+  content: {
     flex: 1,
-  },
-  scrollContent: {
     padding: 20,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.errorContainer,
+  },
+  errorText: {
+    fontSize: 14,
+    color: colors.error,
+    flex: 1,
   },
   grid: {
     flexDirection: 'row',
@@ -151,8 +174,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 140,
     justifyContent: 'center',
-    // Shadow
-    shadowColor: '#000',
+    // Shadow — uses theme token instead of hardcoded '#000'
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,

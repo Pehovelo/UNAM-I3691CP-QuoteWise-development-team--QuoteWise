@@ -46,6 +46,7 @@ export default function WelcomeLoginScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="Get started with QuoteWise"
+          accessibilityHint="Navigate to the main dashboard"
         >
           <Text style={styles.buttonLabel}>Get Started</Text>
         </Pressable>

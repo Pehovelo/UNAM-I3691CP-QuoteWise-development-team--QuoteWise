@@ -6,6 +6,7 @@
 
 import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
 import { quotations as MOCK_QUOTATIONS } from '../services/mockData';
+import STATUSES from '../constants/statuses';
 
 // --- Action Types ---
 const ACTIONS = {
@@ -33,27 +34,27 @@ function quotationReducer(state, action) {
       return {
         ...state,
         quotations: state.quotations.map((q) =>
-          q.id === action.payload ? { ...q, status: 'accepted' } : q
+          q.id === action.payload ? { ...q, status: STATUSES.ACCEPTED } : q
         ),
       };
     case ACTIONS.REJECT_QUOTATION:
       return {
         ...state,
         quotations: state.quotations.map((q) =>
-          q.id === action.payload ? { ...q, status: 'rejected' } : q
+          q.id === action.payload ? { ...q, status: STATUSES.REJECTED } : q
         ),
       };
     case ACTIONS.SAVE_QUOTATION:
       return {
         ...state,
         quotations: state.quotations.map((q) =>
-          q.id === action.payload ? { ...q, status: 'saved' } : q
+          q.id === action.payload ? { ...q, status: STATUSES.SAVED } : q
         ),
       };
     case ACTIONS.ADD_DRAFT:
       return {
         ...state,
-        quotations: [...state.quotations, { ...action.payload, id: `QT-${Date.now()}`, status: 'draft' }],
+        quotations: [...state.quotations, { ...action.payload, id: `QT-${Date.now()}`, status: STATUSES.DRAFT }],
       };
     case ACTIONS.UPDATE_DRAFT:
       return {
@@ -110,19 +111,19 @@ export function QuotationProvider({ children }) {
 
   // Derived data — memoized to avoid re-computing on every render
   const drafts = useMemo(
-    () => state.quotations.filter((q) => q.status === 'draft'),
+    () => state.quotations.filter((q) => q.status === STATUSES.DRAFT),
     [state.quotations]
   );
   const pendingQuotations = useMemo(
-    () => state.quotations.filter((q) => q.status === 'pending'),
+    () => state.quotations.filter((q) => q.status === STATUSES.PENDING),
     [state.quotations]
   );
   const savedQuotations = useMemo(
-    () => state.quotations.filter((q) => q.status === 'saved'),
+    () => state.quotations.filter((q) => q.status === STATUSES.SAVED),
     [state.quotations]
   );
   const activeQuotations = useMemo(
-    () => state.quotations.filter((q) => q.status === 'pending' || q.status === 'draft'),
+    () => state.quotations.filter((q) => q.status === STATUSES.PENDING || q.status === STATUSES.DRAFT),
     [state.quotations]
   );
 

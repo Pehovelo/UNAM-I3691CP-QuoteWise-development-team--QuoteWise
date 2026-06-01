@@ -14,6 +14,7 @@ import QuotationsScreen from '../screens/QuotationsScreen';
 import QuotationDetailScreen from '../screens/QuotationDetailScreen';
 import DraftScreen from '../screens/DraftScreen';
 import SavedQuotationsScreen from '../screens/SavedQuotationsScreen';
+import ROUTES from '../constants/routes';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,31 +27,31 @@ export default function AppNavigator() {
     <QuotationProvider>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="WelcomeLogin"
+          initialRouteName={ROUTES.WELCOME_LOGIN}
           screenOptions={screenOptions}
         >
           <Stack.Screen
-            name="WelcomeLogin"
+            name={ROUTES.WELCOME_LOGIN}
             component={WelcomeLoginScreen}
           />
           <Stack.Screen
-            name="Dashboard"
+            name={ROUTES.DASHBOARD}
             component={DashboardScreen}
           />
           <Stack.Screen
-            name="Quotations"
+            name={ROUTES.QUOTATIONS}
             component={QuotationsScreen}
           />
           <Stack.Screen
-            name="QuotationDetail"
+            name={ROUTES.QUOTATION_DETAIL}
             component={QuotationDetailScreen}
           />
           <Stack.Screen
-            name="Drafts"
+            name={ROUTES.DRAFTS}
             component={DraftScreen}
           />
           <Stack.Screen
-            name="SavedQuotations"
+            name={ROUTES.SAVED_QUOTATIONS}
             component={SavedQuotationsScreen}
           />
         </Stack.Navigator>

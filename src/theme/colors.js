@@ -65,6 +65,9 @@ const lightColors = {
   outline: '#8F7065',
   outlineVariant: '#E3BFB1',
 
+  // Utility
+  shadow: '#000000',
+
   // Inverse
   inverseSurface: '#303031',
   inverseOnSurface: '#F2F0F0',
