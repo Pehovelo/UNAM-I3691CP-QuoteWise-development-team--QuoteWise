@@ -69,21 +69,44 @@ This project falls under **Civil Engineering** with a focus on:
 
 ```
 QuoteWise/
-├── App.js                          # Root component (entry point)
-├── app.json                        # Expo app configuration
-├── package.json                    # Dependencies and scripts
-├── README.md                       # This file
+├── App.js                              # Root component (entry point)
+├── app.json                            # Expo app configuration
+├── package.json                        # Dependencies and scripts
+├── index.js                            # Expo root component registration
+├── BUILD_PLAN.md                       # Rebuild plan & audit findings
+├── README.md                           # This file
+├── docs/
+│   ├── mockups/                        # HTML design references (from v0.dev)
+│   └── screenshots/                    # PNG design screenshots
 ├── src/
 │   ├── navigation/
-│   │   └── AppNavigator.js         # React Navigation stack setup
-│   └── screens/
-│       ├── WelcomeLoginScreen.js   # Authentication / welcome screen
-│       ├── DashboardScreen.js      # Main dashboard with navigation cards
-│       ├── DraftScreen.js          # Draft quotation management
-│       ├── QuotationsScreen.js     # Active quotations list
-│       ├── SavedQuotationsScreen.js# Saved/archived quotations
-│       └── QuotationDetailScreen.js# Quotation detail view with accept/reject
-└── assets/                         # App icons, splash images, fonts
+│   │   └── AppNavigator.js             # React Navigation Native Stack
+│   ├── screens/
+│   │   ├── WelcomeLoginScreen.js       # Welcome / authentication screen
+│   │   ├── DashboardScreen.js          # Main dashboard with nav cards
+│   │   ├── QuotationsScreen.js         # Active quotations list (FlashList)
+│   │   ├── QuotationDetailScreen.js    # Detail view with Accept/Reject/Save
+│   │   ├── DraftScreen.js              # Draft quotation management
+│   │   └── SavedQuotationsScreen.js    # Saved/archived quotations
+│   ├── components/
+│   │   ├── Header.js                   # Reusable top app bar
+│   │   ├── QuotationCard.js            # Quotation list item card
+│   │   ├── LoadingState.js             # Centered loading indicator
+│   │   └── EmptyState.js               # Centered empty state message
+│   ├── context/
+│   │   └── QuotationContext.js          # Global quotation state (useReducer)
+│   ├── services/
+│   │   ├── firebase.js                 # Firebase config (placeholder)
+│   │   ├── quotationService.js         # Quotation CRUD service layer
+│   │   └── mockData.js                 # Mock quotation data
+│   ├── theme/
+│   │   ├── colors.js                   # MD3 color tokens (light + dark)
+│   │   ├── spacing.js                  # Spacing & border radius tokens
+│   │   ├── typography.js               # Font size & weight tokens
+│   │   └── index.js                    # Unified theme export
+│   ├── hooks/                          # Custom hooks (future)
+│   └── utils/                          # Utility functions (future)
+└── assets/                             # App icons, splash images
 ```
 
 ---
@@ -155,6 +178,18 @@ The following documents provide detailed project specifications, engineering gui
 
 ## 🔮 Roadmap
 
+- [x] Expo project initialized and configured
+- [x] React Navigation Native Stack with all 6 screens
+- [x] Dashboard with navigation cards and live quotation counts
+- [x] Quotation list screen with FlashList
+- [x] Quotation detail with Accept/Reject/Save actions
+- [x] Draft management screen
+- [x] Saved quotations archive screen
+- [x] Material Design 3 theme system (light + dark tokens)
+- [x] QuotationContext for global state management
+- [x] Firebase service layer (placeholder with env variables)
+- [x] Accessibility labels on all interactive elements
+- [x] Loading and empty states on all list screens
 - [ ] Firebase Authentication (email/password, Google sign-in)
 - [ ] Firestore integration for quotation storage and retrieval
 - [ ] Firebase Storage for PDF uploads and downloads
@@ -163,6 +198,8 @@ The following documents provide detailed project specifications, engineering gui
 - [ ] Offline mode with local caching
 - [ ] Multi-currency support
 - [ ] Export quotations to PDF with company branding
+- [ ] Dark mode toggle
+- [ ] Custom font loading (Newsreader + Geist via @expo-google-fonts)
 
 ---
 
