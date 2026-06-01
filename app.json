@@ -3,6 +3,11 @@
     "name": "QuoteWise",
     "slug": "quotewise",
     "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "e2d31ea2-9677-4f84-95c6-bf4aa6275491"
+      }
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
