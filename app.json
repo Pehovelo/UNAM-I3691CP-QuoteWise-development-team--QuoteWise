@@ -2,7 +2,7 @@
   "expo": {
     "name": "QuoteWise",
     "slug": "quotewise",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "extra": {
       "eas": {
         "projectId": "e2d31ea2-9677-4f84-95c6-bf4aa6275491"
@@ -14,7 +14,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FF6200"
+      "backgroundColor": "#F05A00"
     },
     "ios": {
       "supportsTablet": true,
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#FF6200",
+        "backgroundColor": "#F05A00",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
       "package": "com.quotewise.app"

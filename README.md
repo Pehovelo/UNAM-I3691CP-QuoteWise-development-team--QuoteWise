@@ -1,22 +1,21 @@
-# QuoteWise — Smart Budgeting & Quotation for Construction
+# QuoteWise — Smart Budgeting & Quotation
 
 > **Engineering Domain:** Civil Engineering — Construction Budgeting, Quotation Management & Project Cost Tracking
 
-## 📱 App Description
+## App Overview
 
-**QuoteWise** is a cross-platform Android/iOS mobile application built with **Expo (React Native)** designed for the construction industry. It empowers contractors, project managers, and civil engineering teams to:
+**QuoteWise** is a cross-platform mobile application built with **Expo (React Native SDK 55)** for the construction industry. It enables contractors, project managers, and civil engineering teams to:
 
-- **Create & manage quotations** from suppliers and subcontractors
-- **Track project budgets** in real time with cost breakdowns
-- **Store and retrieve estimates** securely via Firebase
-- **Review, accept, or reject** quotations with full audit trails
-- **Draft and save** estimates for later comparison and approval
+- **Manage supplier quotations** — create, review, and compare estimates
+- **Track project budgets** — real-time cost breakdowns in Namibian Dollars (N$)
+- **Save and archive** — finalized estimates stored for audit and retrieval
+- **Draft quotations** — work-in-progress estimates before submission
 
-The app provides a clean, professional interface optimized for on-site use, enabling construction professionals to make informed financial decisions from anywhere.
+The app features a premium, warm design language inspired by modern fintech applications, with a deep orange brand color (#F05A00), cream surfaces (#FFFAF7), staggered entrance animations, and architectural photography that reflects the construction industry.
 
 ---
 
-## 👥 Team Roster
+## Team Roster
 
 | # | Name | Student Number | Role |
 |---|------|---------------|------|
@@ -35,174 +34,149 @@ The app provides a clean, professional interface optimized for on-site use, enab
 
 ---
 
-## 🏗️ Engineering Domain
-
-This project falls under **Civil Engineering** with a focus on:
-
-- **Construction Cost Estimation** — Material, labor, and equipment cost tracking
-- **Quotation Management** — Supplier bid comparison and approval workflows
-- **Project Budgeting** — Real-time budget monitoring against actual spend
-- **Document Management** — Secure storage of PDFs, contracts, and estimates
-- **Mobile-First Field Operations** — On-site access to financial data for project managers and site engineers
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Framework** | Expo SDK ~55.0.25 |
+| **Framework** | Expo SDK 55 |
 | **UI Runtime** | React Native 0.83.6 |
 | **UI Library** | React 19.2.0 |
-| **Navigation** | React Navigation (Native Stack) |
-| **Lists** | @shopify/flash-list |
-| **Images** | expo-image |
-| **Icons** | @expo/vector-icons (MaterialIcons) |
-| **Gradients** | expo-linear-gradient |
-| **Backend (planned)** | Firebase (Auth, Firestore, Storage) |
+| **Animations** | React Native Animated API (native driver) |
+| **Navigation** | useState screen stack (lightweight, no external deps) |
+| **Backend (planned)** | Fiber (Go) + Firebase |
 | **Language** | JavaScript |
 | **Platform** | Android & iOS |
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 QuoteWise/
-├── App.js                              # Root component (entry point)
-├── app.json                            # Expo app configuration
-├── package.json                        # Dependencies and scripts
-├── index.js                            # Expo root component registration
-├── BUILD_PLAN.md                       # Rebuild plan & audit findings
-├── README.md                           # This file
-├── docs/
-│   ├── mockups/                        # HTML design references (from v0.dev)
-│   └── screenshots/                    # PNG design screenshots
-├── src/
-│   ├── navigation/
-│   │   └── AppNavigator.js             # React Navigation Native Stack
-│   ├── screens/
-│   │   ├── WelcomeLoginScreen.js       # Welcome / authentication screen
-│   │   ├── DashboardScreen.js          # Main dashboard with nav cards
-│   │   ├── QuotationsScreen.js         # Active quotations list (FlashList)
-│   │   ├── QuotationDetailScreen.js    # Detail view with Accept/Reject/Save
-│   │   ├── DraftScreen.js              # Draft quotation management
-│   │   └── SavedQuotationsScreen.js    # Saved/archived quotations
-│   ├── components/
-│   │   ├── Header.js                   # Reusable top app bar
-│   │   ├── QuotationCard.js            # Quotation list item card
-│   │   ├── LoadingState.js             # Centered loading indicator
-│   │   └── EmptyState.js               # Centered empty state message
-│   ├── context/
-│   │   └── QuotationContext.js          # Global quotation state (useReducer)
-│   ├── services/
-│   │   ├── firebase.js                 # Firebase config (placeholder)
-│   │   ├── quotationService.js         # Quotation CRUD service layer
-│   │   └── mockData.js                 # Mock quotation data
-│   ├── theme/
-│   │   ├── colors.js                   # MD3 color tokens (light + dark)
-│   │   ├── spacing.js                  # Spacing & border radius tokens
-│   │   ├── typography.js               # Font size & weight tokens
-│   │   └── index.js                    # Unified theme export
-│   ├── hooks/                          # Custom hooks (future)
-│   └── utils/                          # Utility functions (future)
-└── assets/                             # App icons, splash images
+├── App.js                              # Single-file app (all screens + components + styles)
+├── app.json                            # Expo configuration
+├── package.json                        # Dependencies
+├── index.js                            # Expo root registration
+├── metro.config.js                     # Metro bundler config
+├── eas.json                            # EAS Build configuration
+├── assets/
+│   ├── icon.png                        # App icon
+│   ├── splash-icon.png                 # Splash screen icon
+│   ├── favicon.png                     # Web favicon
+│   ├── android-icon-background.png     # Android adaptive icon bg
+│   ├── android-icon-foreground.png     # Android adaptive icon fg
+│   └── images/                         # Architectural photography
+│       ├── splash_bg.jpg               # Splash screen background
+│       ├── home_header.jpg             # Home screen hero
+│       ├── quotations_header.jpg       # Quotations screen hero
+│       ├── saved_header.jpg            # Saved screen hero
+│       ├── drafts_header.jpg           # Drafts screen hero
+│       ├── desert_shadow.jpg           # Empty state background
+│       ├── detail_concrete.jpg         # Card accent
+│       └── workspace_tabletop.jpg      # Settings/about accent
+└── docs/
+    └── QuoteWise_SRS_13691CP.pdf.pdf  # Software Requirements Spec
 ```
 
 ---
 
-## 🚀 Getting Started
+## Design System
+
+### Color Tokens
+| Token | Value | Usage |
+|-------|-------|-------|
+| `brand` | `#F05A00` | Primary orange — buttons, headers, accents |
+| `brandDeep` | `#C24600` | Dark orange — status bar, deep accents |
+| `brandLight` | `#FF7A2F` | Light orange — hover states, highlights |
+| `surface` | `#FFFAF7` | Warm cream — screen backgrounds |
+| `card` | `#FFFFFF` | White — card backgrounds |
+| `ink` | `#1A0A00` | Near-black — primary text |
+| `inkMid` | `#5C3A1E` | Warm brown — secondary text |
+| `inkLight` | `#A07050` | Light brown — tertiary text |
+| `pending` | `#F05A00` | Orange — pending status |
+| `draft` | `#8B6914` | Amber — draft status |
+| `saved` | `#1A6B4A` | Green — saved status |
+
+### Typography
+- **Display**: Georgia (iOS) / serif (Android) — headings, numbers
+- **Body**: Helvetica Neue (iOS) / sans-serif (Android) — UI text, labels
+- **Mono**: Courier New (iOS) / monospace (Android) — dates, amounts
+
+### Animation System
+- **FadeSlideIn**: Parallel opacity timing + spring translateY with staggered delays
+- **PressableCard**: Spring scale animation (0.97 on press, bounce back)
+- **Pulse**: Looping scale pulse on CTA elements
+- **Ken Burns**: Slow zoom on splash background image
+
+---
+
+## Getting Started
 
 ### Prerequisites
-
-- **Node.js** 18+ and **npm** (or yarn)
-- **Expo CLI** — installed automatically via `npx`
-- **Android Studio** (for Android emulator) or **Xcode** (for iOS simulator)
+- **Node.js** 18+ and **npm**
+- **Expo CLI** via `npx`
 
 ### Installation
-
 ```bash
-# Clone the repository
 git clone <repository-url>
 cd QuoteWise
-
-# Install dependencies
 npm install
-
-# Start the development server
 npx expo start
 ```
 
 ### Running on a Device
+- **Android**: Press `a` in the Expo dev server
+- **iOS**: Press `i` in the Expo dev server
+- **Physical Device**: Scan QR code with **Expo Go**
 
-- **Android Emulator:** Press `a` in the Expo dev server terminal
-- **iOS Simulator:** Press `i` in the Expo dev server terminal
-- **Physical Device:** Scan the QR code with the **Expo Go** app (Android) or **Camera** app (iOS)
+### Building APK
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Login and build
+eas login
+eas build --platform android --profile preview
+```
 
 ---
 
-## 📱 App Screens
+## Screens
 
 | Screen | Description |
 |--------|-------------|
-| **Welcome / Login** | Entry point with authentication flow |
-| **Dashboard** | Central hub with cards for Quotations, Saved Quotations, Drafts, and Settings |
-| **Quotations** | List of active/pending quotations with status tags (Draft, Pending Review) |
-| **Saved Quotations** | Archive of securely stored estimates |
-| **Drafts** | Work-in-progress quotations |
-| **Quotation Detail** | Full quotation view with project title, budget, description, PDF download, and Accept/Reject/Save actions |
+| **Splash** | Animated logo card with Ken Burns background, decorative circles, pulsing CTA |
+| **Home** | Hero header with image, floating summary strip, 2x2 tile grid with count pills |
+| **Quotations** | Hero header, list of active/pending quotations with status badges |
+| **Saved** | Hero header, list of archived quotations with green saved badges |
+| **Drafts** | Hero header, list of draft quotations with amber badges, FAB for new drafts |
 
 ---
 
-## 📄 Reference Documents
+## Roadmap
 
-The following documents provide detailed project specifications, engineering guidelines, and development blueprints:
-
-| Document | Description |
-|----------|-------------|
-| [QuoteWise Mobile App Development](./QuoteWise_Mobile_App_Development3ff4.pdf) | Core app development specifications and requirements |
-| [Engineering Mobile App Playbook](./Engineering_Mobile_App_Playbook.pdf) | Engineering best practices and mobile development guidelines |
-| [QuoteWise Project Blueprint](./QuoteWise_Project_Blueprint.pdf) | Project architecture, milestones, and delivery plan |
-
----
-
-## 📋 Development Workflow
-
-1. **Branch per feature** — Create a new branch for each screen or feature
-2. **Commit often** — Use descriptive commit messages
-3. **Test on device** — Verify UI on both Android and iOS before merging
-4. **Code review** — All PRs reviewed by Lead Developer and GitHub Manager
-5. **Firebase integration** — Coordinate with Firebase Lead for backend connectivity
-
----
-
-## 🔮 Roadmap
-
-- [x] Expo project initialized and configured
-- [x] React Navigation Native Stack with all 6 screens
-- [x] Dashboard with navigation cards and live quotation counts
-- [x] Quotation list screen with FlashList
-- [x] Quotation detail with Accept/Reject/Save actions
-- [x] Draft management screen
-- [x] Saved quotations archive screen
-- [x] Material Design 3 theme system (light + dark tokens)
-- [x] QuotationContext for global state management
-- [x] Firebase service layer (placeholder with env variables)
-- [x] Accessibility labels on all interactive elements
-- [x] Loading and empty states on all list screens
-- [ ] Firebase Authentication (email/password, Google sign-in)
-- [ ] Firestore integration for quotation storage and retrieval
-- [ ] Firebase Storage for PDF uploads and downloads
-- [ ] Real-time budget tracking dashboard
-- [ ] Push notifications for quotation status changes
+- [x] Expo SDK 55 project with React Native 0.83
+- [x] Premium design system with warm orange + cream palette
+- [x] Animated splash screen with Ken Burns effect
+- [x] Hero headers with architectural photography
+- [x] Unified status badge system (Pending/Draft/Saved)
+- [x] Staggered entrance animations on all screens
+- [x] PressableCard spring press micro-interactions
+- [x] FAB on Drafts screen
+- [x] Empty state with atmospheric background
+- [x] Navigation via useState (no React Navigation dependency)
+- [x] EAS Build for Android APK
+- [ ] Firebase Authentication
+- [ ] Firestore integration for quotation storage
+- [ ] Fiber (Go) backend API connection
+- [ ] Quotation creation and editing flow
+- [ ] PDF export with company branding
+- [ ] Push notifications
 - [ ] Offline mode with local caching
-- [ ] Multi-currency support
-- [ ] Export quotations to PDF with company branding
-- [ ] Dark mode toggle
-- [ ] Custom font loading (Newsreader + Geist via @expo-google-fonts)
+- [ ] Dark mode
 
 ---
 
-## 📞 Contact
+## Contact
 
 For questions or contributions, reach out to the project team via the repository issues or contact **Immanuel Oliveira** (Project Manager).
