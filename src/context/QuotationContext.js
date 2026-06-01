@@ -212,7 +212,7 @@ export function QuotationProvider({ children }) {
   }, []);
 
   const deleteDraft = useCallback((id) => {
-    dispatch({ type: ACTIONS.DELETE_QUOTATION, payload: id });
+    dispatch({ type: ACTIONS.DELETE_DRAFT, payload: id });
   }, []);
 
   // Derived data
