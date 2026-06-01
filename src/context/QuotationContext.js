@@ -1,118 +1,11 @@
 /**
  * QuoteWise Quotation Context
  * Provides quotation state management across the app.
- * Currently uses mock data; will be replaced with Firebase Firestore.
+ * Currently uses mock data from mockData.js; will be replaced with Firebase Firestore.
  */
 
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
-
-// --- Mock Data ---
-const MOCK_QUOTATIONS = [
-  {
-    id: 'QT-001',
-    title: 'Quotation from Imms Trading CC',
-    supplier: 'Imms Trading CC',
-    projectTitle: 'Head Office HVAC Installation',
-    budget: 145500.00,
-    currency: 'N$',
-    description: 'Supply and installation of 5x 24000 BTU inverter split units for the main open-plan office space. Includes all copper piping, electrical connections to existing DB, and commissioning.',
-    status: 'pending', // draft | pending | saved | accepted | rejected
-    date: '2026-04-01',
-    validUntil: '2026-05-01',
-    referenceNumber: 'IMMS-0042',
-  },
-  {
-    id: 'QT-002',
-    title: 'Quotation from Imms Trading CC',
-    supplier: 'Imms Trading CC',
-    projectTitle: 'Warehouse Concrete Flooring',
-    budget: 287000.00,
-    currency: 'N$',
-    description: 'Supply and laying of 500m² industrial concrete flooring with mesh reinforcement and power float finish. Includes site preparation and compaction.',
-    status: 'pending',
-    date: '2026-04-01',
-    validUntil: '2026-05-01',
-    referenceNumber: 'IMMS-0043',
-  },
-  {
-    id: 'QT-003',
-    title: 'Quotation from BuildMat Suppliers',
-    supplier: 'BuildMat Suppliers',
-    projectTitle: 'Office Renovation — Phase 2',
-    budget: 92500.00,
-    currency: 'N$',
-    description: 'Supply of building materials for office renovation including drywall partitions, ceiling boards, paint, and electrical fittings as per BOQ.',
-    status: 'draft',
-    date: '2026-03-28',
-    validUntil: '2026-04-28',
-    referenceNumber: 'BM-0187',
-  },
-  {
-    id: 'QT-004',
-    title: 'Quotation from NamSteel Works',
-    supplier: 'NamSteel Works',
-    projectTitle: 'Structural Steel — Factory Extension',
-    budget: 420000.00,
-    currency: 'N$',
-    description: 'Fabrication and erection of structural steel frame for 200m² factory extension. Includes all welding, bolting, and anti-corrosion treatment.',
-    status: 'draft',
-    date: '2026-03-15',
-    validUntil: '2026-04-15',
-    referenceNumber: 'NS-0452',
-  },
-  {
-    id: 'QT-005',
-    title: 'Quotation from Imms Trading CC',
-    supplier: 'Imms Trading CC',
-    projectTitle: 'Plumbing — Staff Kitchen Refit',
-    budget: 38000.00,
-    currency: 'N$',
-    description: 'Complete plumbing installation for staff kitchen refit including hot water cylinder, sinks, and drainage.',
-    status: 'saved',
-    date: '2026-02-20',
-    validUntil: '2026-03-20',
-    referenceNumber: 'IMMS-0039',
-  },
-  {
-    id: 'QT-006',
-    title: 'Quotation from ElectraConnect',
-    supplier: 'ElectraConnect',
-    projectTitle: 'DB Upgrade & Reticulation',
-    budget: 67500.00,
-    currency: 'N$',
-    description: 'Upgrade of main distribution board and reticulation for the new wing. Includes certificates of compliance.',
-    status: 'saved',
-    date: '2026-02-10',
-    validUntil: '2026-03-10',
-    referenceNumber: 'EC-0781',
-  },
-  {
-    id: 'QT-007',
-    title: 'Quotation from PaintPro Namibia',
-    supplier: 'PaintPro Namibia',
-    projectTitle: 'Exterior Painting — Admin Block',
-    budget: 52000.00,
-    currency: 'N$',
-    description: 'Exterior painting of admin block including preparation, primer, and two coats of Plascon Nuroof.',
-    status: 'accepted',
-    date: '2026-01-15',
-    validUntil: '2026-02-15',
-    referenceNumber: 'PP-0234',
-  },
-  {
-    id: 'QT-008',
-    title: 'Quotation from GlassFit Windhoek',
-    supplier: 'GlassFit Windhoek',
-    projectTitle: 'Window Replacement — Boardroom',
-    budget: 29000.00,
-    currency: 'N$',
-    description: 'Supply and installation of aluminum framed windows for boardroom. Includes removal of existing windows.',
-    status: 'rejected',
-    date: '2026-01-05',
-    validUntil: '2026-02-05',
-    referenceNumber: 'GF-0567',
-  },
-];
+import React, { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
+import { quotations as MOCK_QUOTATIONS } from '../services/mockData';
 
 // --- Action Types ---
 const ACTIONS = {
@@ -215,15 +108,26 @@ export function QuotationProvider({ children }) {
     dispatch({ type: ACTIONS.DELETE_DRAFT, payload: id });
   }, []);
 
-  // Derived data
-  const drafts = state.quotations.filter((q) => q.status === 'draft');
-  const pendingQuotations = state.quotations.filter((q) => q.status === 'pending');
-  const savedQuotations = state.quotations.filter((q) => q.status === 'saved');
-  const activeQuotations = state.quotations.filter(
-    (q) => q.status === 'pending' || q.status === 'draft'
+  // Derived data — memoized to avoid re-computing on every render
+  const drafts = useMemo(
+    () => state.quotations.filter((q) => q.status === 'draft'),
+    [state.quotations]
+  );
+  const pendingQuotations = useMemo(
+    () => state.quotations.filter((q) => q.status === 'pending'),
+    [state.quotations]
+  );
+  const savedQuotations = useMemo(
+    () => state.quotations.filter((q) => q.status === 'saved'),
+    [state.quotations]
+  );
+  const activeQuotations = useMemo(
+    () => state.quotations.filter((q) => q.status === 'pending' || q.status === 'draft'),
+    [state.quotations]
   );
 
-  const value = {
+  // Context value — memoized to prevent cascade re-renders
+  const value = useMemo(() => ({
     quotations: state.quotations,
     drafts,
     pendingQuotations,
@@ -237,7 +141,12 @@ export function QuotationProvider({ children }) {
     addDraft,
     updateDraft,
     deleteDraft,
-  };
+  }), [
+    state.quotations, state.loading, state.error,
+    drafts, pendingQuotations, savedQuotations, activeQuotations,
+    acceptQuotation, rejectQuotation, saveQuotation,
+    addDraft, updateDraft, deleteDraft,
+  ]);
 
   return (
     <QuotationContext.Provider value={value}>

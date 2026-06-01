@@ -19,7 +19,7 @@ export default function SavedQuotationsScreen() {
   const { savedQuotations, loading } = useQuotations();
 
   const handleBack = () => {
-    navigation.navigate('Dashboard');
+    navigation.goBack();
   };
 
   const handleQuotationPress = (quotation) => {

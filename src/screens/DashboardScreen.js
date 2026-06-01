@@ -73,7 +73,11 @@ export default function DashboardScreen() {
   };
 
   const rightAction = (
-    <View style={styles.avatarCircle}>
+    <View
+      style={styles.avatarCircle}
+      accessibilityRole="button"
+      accessibilityLabel="User profile"
+    >
       <MaterialIcons name="person" size={22} color={colors.primary} />
     </View>
   );

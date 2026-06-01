@@ -27,7 +27,7 @@ export default function DraftScreen() {
   const { drafts, loading } = useQuotations();
 
   const handleBack = () => {
-    navigation.navigate('Dashboard');
+    navigation.goBack();
   };
 
   const handleDraftPress = (quotation) => {

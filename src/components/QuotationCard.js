@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import colors from '../theme/colors';
@@ -50,7 +50,7 @@ function capitalize(str) {
  * @param {object}   props.quotation - Quotation data: { id, title, date, status, referenceNumber }
  * @param {Function} props.onPress   - Callback invoked with the quotation object
  */
-export default function QuotationCard({ quotation, onPress }) {
+const QuotationCard = React.memo(function QuotationCard({ quotation, onPress }) {
   const { title, date, status, referenceNumber } = quotation;
   const statusStyle = STATUS_STYLES[status] ?? STATUS_STYLES.draft;
 
@@ -63,15 +63,18 @@ export default function QuotationCard({ quotation, onPress }) {
     .filter(Boolean)
     .join(', ');
 
+  const handlePress = useCallback(() => {
+    onPress(quotation);
+  }, [onPress, quotation]);
+
   return (
     <Pressable
-      onPress={() => onPress(quotation)}
+      onPress={handlePress}
       style={styles.pressable}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
     >
       <View style={styles.row}>
-        {/* Left content */}
         <View style={styles.leftContent}>
           <Text style={styles.title} numberOfLines={2}>
             {title}
@@ -82,6 +85,8 @@ export default function QuotationCard({ quotation, onPress }) {
               size={14}
               color={colors.onSurfaceVariant}
               style={styles.dateIcon}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
             />
             <Text style={styles.dateText} numberOfLines={1}>
               {date}
@@ -89,7 +94,6 @@ export default function QuotationCard({ quotation, onPress }) {
           </View>
         </View>
 
-        {/* Right content */}
         <View style={styles.rightContent}>
           <View
             style={[
@@ -108,12 +112,16 @@ export default function QuotationCard({ quotation, onPress }) {
             name="chevron-right"
             size={24}
             color={colors.outline}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
           />
         </View>
       </View>
     </Pressable>
   );
-}
+});
+
+export default QuotationCard;
 
 const styles = StyleSheet.create({
   pressable: {

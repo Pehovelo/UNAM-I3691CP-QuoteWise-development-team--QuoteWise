@@ -90,6 +90,8 @@ export default function QuotationDetailScreen() {
             size={18}
             color={colors.onSurfaceVariant}
             style={styles.dateIcon}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
           />
           <Text style={styles.dateText}>
             {quotation.date} — {quotation.validUntil}
@@ -108,6 +110,8 @@ export default function QuotationDetailScreen() {
             size={18}
             color={colors.onSurfaceVariant}
             style={styles.supplierIcon}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
           />
           <Text style={styles.supplierText}>{quotation.supplier}</Text>
         </View>
@@ -125,6 +129,8 @@ export default function QuotationDetailScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="Download PDF"
+          accessibilityHint="PDF download coming in a future update"
+          accessibilityState={{ disabled: true }}
         >
           <MaterialIcons name="download" size={20} color={colors.primary} />
           <Text style={styles.downloadLabel}>Download PDF</Text>
@@ -144,6 +150,7 @@ export default function QuotationDetailScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="Reject quotation"
+          accessibilityHint="Rejects this quotation and navigates back"
         >
           <Text style={styles.rejectLabel}>Reject</Text>
         </Pressable>
@@ -156,6 +163,7 @@ export default function QuotationDetailScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="Save quotation"
+          accessibilityHint="Saves this quotation for later and navigates back"
         >
           <Text style={styles.saveLabel}>Save</Text>
         </Pressable>
@@ -168,6 +176,7 @@ export default function QuotationDetailScreen() {
           ]}
           accessibilityRole="button"
           accessibilityLabel="Accept quotation"
+          accessibilityHint="Accepts this quotation and navigates back"
         >
           <Text style={styles.acceptLabel}>Accept</Text>
         </Pressable>
