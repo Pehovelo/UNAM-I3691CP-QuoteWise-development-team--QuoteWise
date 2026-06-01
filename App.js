@@ -26,9 +26,7 @@ const IMAGES = {
   quotationsHeader: require('./assets/images/quotations_header.jpg'),
   savedHeader: require('./assets/images/saved_header.jpg'),
   draftsHeader: require('./assets/images/drafts_header.jpg'),
-  detailConcrete: require('./assets/images/detail_concrete.jpg'),
   desertShadow: require('./assets/images/desert_shadow.jpg'),
-  workspaceTabletop: require('./assets/images/workspace_tabletop.jpg'),
 };
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
@@ -170,31 +168,7 @@ function PressableCard({ children, onPress, style }) {
   );
 }
 
-function ShimmerView({ children, style }) {
-  const shimmer = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const anim = Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, { toValue: 1, duration: 1800, useNativeDriver: true }),
-        Animated.timing(shimmer, { toValue: 0, duration: 1800, useNativeDriver: true }),
-      ])
-    );
-    anim.start();
-    return () => anim.stop();
-  }, []);
-
-  const opacity = shimmer.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.4, 0.9],
-  });
-
-  return (
-    <Animated.View style={[style, { opacity }]}>
-      {children}
-    </Animated.View>
-  );
-}
 
 // ─── Status Badge ─────────────────────────────────────────────────────────────
 function StatusBadge({ status }) {
@@ -475,13 +449,12 @@ function SplashScreen({ onStart }) {
 
       {/* Background image with Ken Burns zoom */}
       <Animated.View style={[splashStyles.bgWrap, { transform: [{ scale: bgScale }] }]}>
-        <ImageBackground
+        <Image
           source={IMAGES.splashBg}
           style={splashStyles.bgImage}
-          imageStyle={splashStyles.bgImageStyle}
-        >
-          <View style={splashStyles.bgOverlay} />
-        </ImageBackground>
+          resizeMode="cover"
+        />
+        <View style={splashStyles.bgOverlay} />
       </Animated.View>
 
       {/* Decorative circles */}
@@ -554,13 +527,20 @@ const splashStyles = StyleSheet.create({
     bottom: 0,
   },
   bgImage: {
-    flex: 1,
-  },
-  bgImageStyle: {
-    resizeMode: 'cover',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: undefined,
+    height: undefined,
   },
   bgOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(240,90,0,0.72)',
   },
   circle: {
