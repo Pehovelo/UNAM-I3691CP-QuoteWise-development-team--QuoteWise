@@ -2,7 +2,8 @@ import React from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Alert,
 } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { logoutUser } from '../services/authService';
 
@@ -20,24 +21,24 @@ export default function SettingsScreen({ navigation, user }) {
     {
       title: 'Account',
       items: [
-        { icon: '👤', label: 'Edit Profile', onPress: () => navigation.navigate('Profile') },
-        { icon: '🔒', label: 'Change Password', onPress: () => navigation.navigate('ForgotPassword') },
+        { icon: 'person-outline', label: 'Edit Profile', onPress: () => navigation.navigate('Profile') },
+        { icon: 'lock-closed-outline', label: 'Change Password', onPress: () => navigation.navigate('ForgotPassword') },
       ],
     },
     {
       title: 'Preferences',
       items: [
-        { icon: '🔔', label: 'Notifications', onPress: () => Alert.alert('Coming Soon', 'Notifications will be available in a future update.') },
-        { icon: '🎨', label: 'Appearance', onPress: () => Alert.alert('Coming Soon', 'Dark mode will be available in a future update.') },
-        { icon: '🌐', label: 'Language', onPress: () => Alert.alert('Language', 'English (default)') },
+        { icon: 'notifications-outline', label: 'Notifications', onPress: () => Alert.alert('Coming Soon', 'Notifications will be available in a future update.') },
+        { icon: 'color-palette-outline', label: 'Appearance', onPress: () => Alert.alert('Coming Soon', 'Dark mode will be available in a future update.') },
+        { icon: 'language-outline', label: 'Language', onPress: () => Alert.alert('Language', 'English (default)') },
       ],
     },
     {
       title: 'About',
       items: [
-        { icon: '📄', label: 'Terms of Service', onPress: () => Alert.alert('Terms', 'QuoteWise Terms of Service v3.0.0') },
-        { icon: '🔒', label: 'Privacy Policy', onPress: () => Alert.alert('Privacy', 'QuoteWise Privacy Policy v3.0.0') },
-        { icon: 'ℹ️', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v3.0.0\nExpo SDK 55\nFirebase JS SDK') },
+        { icon: 'document-text-outline', label: 'Terms of Service', onPress: () => Alert.alert('Terms', 'QuoteWise Terms of Service v3.0.0') },
+        { icon: 'shield-outline', label: 'Privacy Policy', onPress: () => Alert.alert('Privacy', 'QuoteWise Privacy Policy v3.0.0') },
+        { icon: 'information-circle-outline', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v3.0.0\nExpo SDK 55\nFirebase JS SDK') },
       ],
     },
   ];
@@ -50,10 +51,10 @@ export default function SettingsScreen({ navigation, user }) {
           <FadeSlideIn>
             <View style={s.headerContent}>
               <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityRole="button">
-                <Text style={s.backArrow}>←</Text>
+                <Ionicons name="arrow-back" size={rs(22)} color="#FFFFFF" />
               </TouchableOpacity>
               <Text style={s.headerTitle}>Settings</Text>
-              <View style={{ width: 40 }} />
+              <View style={{ width: rs(40) }} />
             </View>
           </FadeSlideIn>
         </SafeAreaView>
@@ -68,9 +69,9 @@ export default function SettingsScreen({ navigation, user }) {
                 <React.Fragment key={item.label}>
                   {ii > 0 && <View style={s.itemDivider} />}
                   <PressableCard onPress={item.onPress} style={s.itemRow}>
-                    <Text style={s.itemIcon}>{item.icon}</Text>
+                    <Ionicons name={item.icon} size={rs(20)} color={COLORS.inkMid} />
                     <Text style={s.itemLabel}>{item.label}</Text>
-                    <Text style={s.itemChevron}>›</Text>
+                    <Ionicons name="chevron-forward" size={rs(18)} color={COLORS.inkFaint} />
                   </PressableCard>
                 </React.Fragment>
               ))}
@@ -80,6 +81,7 @@ export default function SettingsScreen({ navigation, user }) {
 
         <FadeSlideIn delay={300}>
           <TouchableOpacity style={s.logoutBtn} onPress={handleLogout} accessibilityRole="button" accessibilityLabel="Sign out">
+            <Ionicons name="log-out-outline" size={rs(20)} color={COLORS.error} />
             <Text style={s.logoutText}>Sign Out</Text>
           </TouchableOpacity>
         </FadeSlideIn>
@@ -92,29 +94,27 @@ export default function SettingsScreen({ navigation, user }) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surface },
-  header: { backgroundColor: COLORS.brand, paddingBottom: SPACING.xxl },
-  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: SPACING.xxl, paddingTop: SPACING.md },
-  backBtn: { width: 40, height: 40, borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
-  backArrow: { fontSize: 20, color: '#FFFFFF', fontWeight: '600' },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xl, paddingBottom: 40 },
-  sectionTitle: { fontSize: 13, fontWeight: '600', color: COLORS.inkLight, fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: 1, marginBottom: SPACING.sm, marginTop: SPACING.lg },
+  header: { backgroundColor: COLORS.brand, paddingBottom: rs(SPACING.xxl) },
+  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
+  backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(40) },
+  sectionTitle: { fontSize: rs(13), fontWeight: '600', color: COLORS.inkLight, fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: rs(1), marginBottom: rs(SPACING.sm), marginTop: rs(SPACING.lg) },
   sectionCard: {
-    backgroundColor: COLORS.card, borderRadius: RADII.xxl, borderWidth: 1,
+    backgroundColor: COLORS.card, borderRadius: RADII.xxl, borderWidth: rs(1),
     borderColor: COLORS.cardBorder, overflow: 'hidden',
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4, shadowRadius: 8, elevation: 2,
+    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: rs(2) },
+    shadowOpacity: 0.4, shadowRadius: rs(8), elevation: 2,
   },
-  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: SPACING.lg, paddingHorizontal: SPACING.lg },
-  itemIcon: { fontSize: 20, marginRight: SPACING.md, width: 28, textAlign: 'center' },
-  itemLabel: { fontSize: 15, color: COLORS.ink, fontFamily: FONTS.body, flex: 1 },
-  itemChevron: { fontSize: 20, color: COLORS.inkFaint, fontWeight: '300' },
-  itemDivider: { height: 1, backgroundColor: COLORS.divider, marginLeft: 56 },
+  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: rs(SPACING.lg), paddingHorizontal: rs(SPACING.lg) },
+  itemLabel: { fontSize: rs(15), color: COLORS.ink, fontFamily: FONTS.body, flex: 1, marginLeft: rs(SPACING.md) },
+  itemDivider: { height: rs(1), backgroundColor: COLORS.divider, marginLeft: rs(56) },
   logoutBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: rs(8),
     backgroundColor: COLORS.errorBg, borderRadius: RADII.xxl,
-    paddingVertical: SPACING.lg, alignItems: 'center', marginTop: SPACING.xxxl,
-    borderWidth: 1, borderColor: 'rgba(220,38,38,0.15)',
+    paddingVertical: rs(SPACING.lg), marginTop: rs(SPACING.xxxl),
+    borderWidth: rs(1), borderColor: 'rgba(220,38,38,0.15)',
   },
-  logoutText: { fontSize: 16, fontWeight: '700', color: COLORS.error, fontFamily: FONTS.body },
-  versionText: { fontSize: 12, color: COLORS.inkFaint, fontFamily: FONTS.mono, textAlign: 'center', marginTop: SPACING.xl },
+  logoutText: { fontSize: rs(16), fontWeight: '700', color: COLORS.error, fontFamily: FONTS.body },
+  versionText: { fontSize: rs(12), color: COLORS.inkFaint, fontFamily: FONTS.mono, textAlign: 'center', marginTop: rs(SPACING.xl) },
 });

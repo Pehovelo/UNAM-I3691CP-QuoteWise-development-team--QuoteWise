@@ -2,7 +2,7 @@
   "expo": {
     "name": "QuoteWise",
     "slug": "quotewise",
-    "version": "4.0.0",
+    "version": "4.1.0",
     "extra": {
       "eas": {
         "projectId": "e2d31ea2-9677-4f84-95c6-bf4aa6275491"

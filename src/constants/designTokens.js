@@ -1,7 +1,12 @@
 import { Platform, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const isIOS = Platform.OS === 'ios';
+
+// Responsive scaling based on design baseline (390px wide)
+const BASELINE_WIDTH = 390;
+const scale = Math.min(SCREEN_WIDTH / BASELINE_WIDTH, 1.3); // cap at 1.3 for tablets
+export const rs = (size) => Math.round(size * scale);
 
 export const COLORS = {
   brand: '#F05A00',
@@ -56,4 +61,4 @@ export const IMAGES = {
   desertShadow: require('../../assets/images/desert_shadow.jpg'),
 };
 
-export { width, height, isIOS };
+export { SCREEN_WIDTH as width, SCREEN_HEIGHT as height, isIOS, scale };

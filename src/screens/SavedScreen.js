@@ -3,7 +3,8 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   StatusBar, ImageBackground, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII, IMAGES } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeSavedQuotations } from '../services/firestoreService';
 
@@ -29,7 +30,7 @@ export default function SavedScreen({ navigation, user }) {
             <FadeSlideIn>
               <View style={s.heroRow}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityRole="button">
-                  <Text style={s.backArrow}>←</Text>
+                  <Ionicons name="arrow-back" size={rs(22)} color="#FFFFFF" />
                 </TouchableOpacity>
                 <View style={s.heroTextWrap}>
                   <Text style={s.heroTitle}>Saved</Text>
@@ -49,11 +50,11 @@ export default function SavedScreen({ navigation, user }) {
         </FadeSlideIn>
 
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : saved.length === 0 ? (
           <FadeSlideIn delay={150}>
             <View style={s.emptyState}>
-              <Text style={s.emptyIcon}>🔖</Text>
+              <Ionicons name="bookmark-outline" size={rs(48)} color={COLORS.inkFaint} />
               <Text style={s.emptyTitle}>No saved quotations</Text>
               <Text style={s.emptyMsg}>Finalized estimates will be archived here.</Text>
             </View>
@@ -67,7 +68,7 @@ export default function SavedScreen({ navigation, user }) {
               >
                 <View style={s.rowLeft}>
                   <View style={s.rowIconWrap}>
-                    <Text style={s.rowIcon}>🔖</Text>
+                    <Ionicons name="bookmark" size={rs(20)} color={COLORS.saved} />
                   </View>
                   <View style={s.rowTextWrap}>
                     <Text style={s.rowTitle} numberOfLines={1}>{item.supplier || item.text}</Text>
@@ -79,7 +80,7 @@ export default function SavedScreen({ navigation, user }) {
                     <View style={[s.badgeDot, { backgroundColor: COLORS.saved }]} />
                     <Text style={[s.badgeText, { color: COLORS.saved }]}>Saved</Text>
                   </View>
-                  <Text style={s.chevron}>›</Text>
+                  <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
                 </View>
               </PressableCard>
             </FadeSlideIn>
@@ -92,40 +93,36 @@ export default function SavedScreen({ navigation, user }) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surface },
-  heroBg: { height: 180 },
+  heroBg: { height: rs(180) },
   heroImageStyle: { resizeMode: 'cover' },
-  heroOverlay: { flex: 1, backgroundColor: COLORS.overlayDeep, justifyContent: 'flex-end', paddingBottom: SPACING.xl },
-  heroRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.xxl, gap: SPACING.lg },
-  backBtn: { width: 44, height: 44, borderRadius: RADII.lg, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
-  backArrow: { fontSize: 20, color: '#FFFFFF', fontWeight: '600' },
+  heroOverlay: { flex: 1, backgroundColor: COLORS.overlayDeep, justifyContent: 'flex-end', paddingBottom: rs(SPACING.xl) },
+  heroRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(SPACING.xxl), gap: rs(SPACING.lg) },
+  backBtn: { width: rs(44), height: rs(44), borderRadius: RADII.lg, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: rs(1), borderColor: 'rgba(255,255,255,0.2)' },
   heroTextWrap: { flex: 1 },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: -0.5 },
-  heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: 2 },
+  heroTitle: { fontSize: rs(24), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: rs(-0.5) },
+  heroSub: { fontSize: rs(12), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: rs(2) },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: SPACING.xl, paddingTop: SPACING.lg, paddingBottom: 100 },
-  statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.lg, paddingHorizontal: SPACING.xs },
-  statsCount: { fontSize: 13, color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
-  emptyState: { alignItems: 'center', paddingTop: 40 },
-  emptyIcon: { fontSize: 36, marginBottom: SPACING.md },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginBottom: SPACING.sm },
-  emptyMsg: { fontSize: 13, color: COLORS.inkLight, fontFamily: FONTS.body, textAlign: 'center', lineHeight: 19, paddingHorizontal: SPACING.xxxl },
+  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) },
+  statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: rs(SPACING.lg), paddingHorizontal: rs(SPACING.xs) },
+  statsCount: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
+  emptyState: { alignItems: 'center', paddingTop: rs(40) },
+  emptyTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginTop: rs(SPACING.md), marginBottom: rs(SPACING.sm) },
+  emptyMsg: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, textAlign: 'center', lineHeight: rs(19), paddingHorizontal: rs(SPACING.xxxl) },
   rowCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: COLORS.card, borderRadius: RADII.lg, paddingVertical: SPACING.lg,
-    paddingHorizontal: SPACING.lg, marginBottom: SPACING.md, borderWidth: 1,
+    backgroundColor: COLORS.card, borderRadius: RADII.lg, paddingVertical: rs(SPACING.lg),
+    paddingHorizontal: rs(SPACING.lg), marginBottom: rs(SPACING.md), borderWidth: rs(1),
     borderColor: COLORS.cardBorder, shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6,
-    shadowRadius: 8, elevation: 2,
+    shadowOffset: { width: 0, height: rs(2) }, shadowOpacity: 0.6,
+    shadowRadius: rs(8), elevation: 2,
   },
-  rowLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: SPACING.md },
-  rowIconWrap: { width: 44, height: 44, borderRadius: RADII.md, backgroundColor: COLORS.savedBg, alignItems: 'center', justifyContent: 'center', marginRight: SPACING.md },
-  rowIcon: { fontSize: 20 },
+  rowLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: rs(SPACING.md) },
+  rowIconWrap: { width: rs(44), height: rs(44), borderRadius: RADII.md, backgroundColor: COLORS.savedBg, alignItems: 'center', justifyContent: 'center', marginRight: rs(SPACING.md) },
   rowTextWrap: { flex: 1 },
-  rowTitle: { fontSize: 15, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: 2 },
-  rowSub: { fontSize: 13, color: COLORS.inkMid, fontFamily: FONTS.body },
-  rowRight: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-  badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: RADII.pill, gap: 5 },
-  badgeDot: { width: 6, height: 6, borderRadius: 3 },
-  badgeText: { fontSize: 11, fontWeight: '600', fontFamily: FONTS.body },
-  chevron: { fontSize: 22, color: COLORS.inkFaint, fontWeight: '300' },
+  rowTitle: { fontSize: rs(15), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(2) },
+  rowSub: { fontSize: rs(13), color: COLORS.inkMid, fontFamily: FONTS.body },
+  rowRight: { flexDirection: 'row', alignItems: 'center', gap: rs(SPACING.sm) },
+  badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(10), paddingVertical: rs(5), borderRadius: RADII.pill, gap: rs(5) },
+  badgeDot: { width: rs(6), height: rs(6), borderRadius: rs(3) },
+  badgeText: { fontSize: rs(11), fontWeight: '600', fontFamily: FONTS.body },
 });

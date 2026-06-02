@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ActivityIndicator,
 } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { getUserProfile } from '../services/firestoreService';
 
@@ -30,10 +31,10 @@ export default function ProfileScreen({ navigation, user }) {
           <FadeSlideIn>
             <View style={s.headerContent}>
               <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityRole="button">
-                <Text style={s.backArrow}>←</Text>
+                <Ionicons name="arrow-back" size={rs(22)} color="#FFFFFF" />
               </TouchableOpacity>
               <Text style={s.headerTitle}>Profile</Text>
-              <View style={{ width: 40 }} />
+              <View style={{ width: rs(40) }} />
             </View>
           </FadeSlideIn>
         </SafeAreaView>
@@ -41,7 +42,7 @@ export default function ProfileScreen({ navigation, user }) {
 
       <ScrollView contentContainerStyle={s.content}>
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : (
           <>
             <FadeSlideIn>
@@ -88,9 +89,9 @@ export default function ProfileScreen({ navigation, user }) {
 
             <FadeSlideIn delay={200}>
               <PressableCard onPress={() => navigation.navigate('Settings')} style={s.navCard}>
-                <Text style={s.navCardIcon}>⚙️</Text>
+                <Ionicons name="settings-outline" size={rs(22)} color={COLORS.inkMid} />
                 <Text style={s.navCardLabel}>Settings</Text>
-                <Text style={s.navCardChevron}>›</Text>
+                <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
               </PressableCard>
             </FadeSlideIn>
           </>
@@ -102,40 +103,37 @@ export default function ProfileScreen({ navigation, user }) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surface },
-  header: { backgroundColor: COLORS.brand, paddingBottom: SPACING.xxl },
-  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: SPACING.xxl, paddingTop: SPACING.md },
-  backBtn: { width: 40, height: 40, borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
-  backArrow: { fontSize: 20, color: '#FFFFFF', fontWeight: '600' },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxxl, paddingBottom: 40 },
-  avatarSection: { alignItems: 'center', marginBottom: SPACING.xxxl },
+  header: { backgroundColor: COLORS.brand, paddingBottom: rs(SPACING.xxl) },
+  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
+  backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(40) },
+  avatarSection: { alignItems: 'center', marginBottom: rs(SPACING.xxxl) },
   avatarLarge: {
-    width: 80, height: 80, borderRadius: 40, backgroundColor: COLORS.brandGlow,
-    alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.lg,
-    borderWidth: 2, borderColor: COLORS.brand,
+    width: rs(80), height: rs(80), borderRadius: rs(40), backgroundColor: COLORS.brandGlow,
+    alignItems: 'center', justifyContent: 'center', marginBottom: rs(SPACING.lg),
+    borderWidth: rs(2), borderColor: COLORS.brand,
   },
-  avatarText: { fontSize: 28, fontWeight: '800', color: COLORS.brand, fontFamily: FONTS.display },
-  name: { fontSize: 22, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginBottom: 4 },
-  email: { fontSize: 14, color: COLORS.inkLight, fontFamily: FONTS.body, marginBottom: SPACING.md },
-  roleBadge: { backgroundColor: COLORS.brandGlow, borderRadius: RADII.pill, paddingHorizontal: SPACING.lg, paddingVertical: SPACING.sm },
-  roleText: { fontSize: 12, fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.body, textTransform: 'capitalize' },
+  avatarText: { fontSize: rs(28), fontWeight: '800', color: COLORS.brand, fontFamily: FONTS.display },
+  name: { fontSize: rs(22), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginBottom: rs(4) },
+  email: { fontSize: rs(14), color: COLORS.inkLight, fontFamily: FONTS.body, marginBottom: rs(SPACING.md) },
+  roleBadge: { backgroundColor: COLORS.brandGlow, borderRadius: RADII.pill, paddingHorizontal: rs(SPACING.lg), paddingVertical: rs(SPACING.sm) },
+  roleText: { fontSize: rs(12), fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.body, textTransform: 'capitalize' },
   infoCard: {
-    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: SPACING.xl,
-    marginBottom: SPACING.xl, borderWidth: 1, borderColor: COLORS.cardBorder,
+    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),
+    marginBottom: rs(SPACING.xl), borderWidth: rs(1), borderColor: COLORS.cardBorder,
   },
-  infoCardTitle: { fontSize: 16, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: SPACING.lg },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: SPACING.sm },
-  infoLabel: { fontSize: 14, color: COLORS.inkLight, fontFamily: FONTS.body },
-  infoValue: { fontSize: 14, color: COLORS.ink, fontFamily: FONTS.body, fontWeight: '500', flex: 1, textAlign: 'right' },
-  infoDivider: { height: 1, backgroundColor: COLORS.divider },
+  infoCardTitle: { fontSize: rs(16), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(SPACING.lg) },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: rs(SPACING.sm) },
+  infoLabel: { fontSize: rs(14), color: COLORS.inkLight, fontFamily: FONTS.body },
+  infoValue: { fontSize: rs(14), color: COLORS.ink, fontFamily: FONTS.body, fontWeight: '500', flex: 1, textAlign: 'right' },
+  infoDivider: { height: rs(1), backgroundColor: COLORS.divider },
   navCard: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.card,
-    borderRadius: RADII.xxl, padding: SPACING.xl, borderWidth: 1,
+    borderRadius: RADII.xxl, padding: rs(SPACING.xl), borderWidth: rs(1),
     borderColor: COLORS.cardBorder, shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4,
-    shadowRadius: 8, elevation: 2,
+    shadowOffset: { width: 0, height: rs(2) }, shadowOpacity: 0.4,
+    shadowRadius: rs(8), elevation: 2,
   },
-  navCardIcon: { fontSize: 22, marginRight: SPACING.md },
-  navCardLabel: { fontSize: 16, fontWeight: '600', color: COLORS.ink, fontFamily: FONTS.body, flex: 1 },
-  navCardChevron: { fontSize: 22, color: COLORS.inkFaint, fontWeight: '300' },
+  navCardLabel: { fontSize: rs(16), fontWeight: '600', color: COLORS.ink, fontFamily: FONTS.body, flex: 1, marginLeft: rs(SPACING.md) },
 });

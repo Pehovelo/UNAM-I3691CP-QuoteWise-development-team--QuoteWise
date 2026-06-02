@@ -2,8 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, StyleSheet } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, rs } from '../constants/designTokens';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
@@ -27,18 +27,23 @@ function MainTabs({ user }) {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          const icons = {
-            Home: '🏠',
-            Quotations: '🗂️',
-            Drafts: '✏️',
-            Saved: '🔖',
-          };
-          return <Text style={[s.tabIcon, { color }]}>{icons[route.name] || '📄'}</Text>;
+          let iconName;
+          const iconSize = rs(22);
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Quotations') {
+            iconName = focused ? 'document-text' : 'document-text-outline';
+          } else if (route.name === 'Drafts') {
+            iconName = focused ? 'create' : 'create-outline';
+          } else if (route.name === 'Saved') {
+            iconName = focused ? 'bookmark' : 'bookmark-outline';
+          }
+          return <Ionicons name={iconName} size={iconSize} color={color} />;
         },
         tabBarActiveTintColor: COLORS.brand,
         tabBarInactiveTintColor: COLORS.inkFaint,
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: rs(11),
           fontFamily: FONTS.body,
           fontWeight: '600',
         },
@@ -46,9 +51,9 @@ function MainTabs({ user }) {
           backgroundColor: COLORS.card,
           borderTopColor: COLORS.cardBorder,
           borderTopWidth: 1,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 6,
+          height: rs(64),
+          paddingBottom: rs(8),
+          paddingTop: rs(6),
         },
       })}
     >
@@ -101,7 +106,3 @@ export default function AppNavigator({ user, showSplash, onSplashComplete }) {
     </NavigationContainer>
   );
 }
-
-const s = StyleSheet.create({
-  tabIcon: { fontSize: 22 },
-});

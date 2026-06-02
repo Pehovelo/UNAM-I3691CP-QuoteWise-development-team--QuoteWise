@@ -3,7 +3,8 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   StatusBar, ImageBackground, SafeAreaView, Alert, ActivityIndicator, TextInput,
 } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII, IMAGES } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeDrafts, addDraft, deleteDraft } from '../services/firestoreService';
 
@@ -67,7 +68,7 @@ export default function DraftsScreen({ navigation, user }) {
             <FadeSlideIn>
               <View style={s.heroRow}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityRole="button">
-                  <Text style={s.backArrow}>←</Text>
+                  <Ionicons name="arrow-back" size={rs(22)} color="#FFFFFF" />
                 </TouchableOpacity>
                 <View style={s.heroTextWrap}>
                   <Text style={s.heroTitle}>Drafts</Text>
@@ -84,7 +85,8 @@ export default function DraftsScreen({ navigation, user }) {
           <View style={s.statsBar}>
             <Text style={s.statsCount}>{drafts.length} drafts</Text>
             <TouchableOpacity style={s.filterBtn} onPress={() => setShowForm(!showForm)}>
-              <Text style={s.filterText}>{showForm ? 'Cancel' : '+ New'}</Text>
+              <Ionicons name={showForm ? 'close' : 'add'} size={rs(16)} color={COLORS.brand} />
+              <Text style={s.filterText}>{showForm ? 'Cancel' : 'New'}</Text>
             </TouchableOpacity>
           </View>
         </FadeSlideIn>
@@ -97,6 +99,7 @@ export default function DraftsScreen({ navigation, user }) {
               <TextInput style={s.formInput} value={newProject} onChangeText={setNewProject} placeholder="Project description" placeholderTextColor={COLORS.inkFaint} />
               <TextInput style={s.formInput} value={newAmount} onChangeText={setNewAmount} placeholder="Amount (e.g. N$ 50,000)" placeholderTextColor={COLORS.inkFaint} keyboardType="numeric" />
               <TouchableOpacity style={s.saveBtn} onPress={handleAddDraft} disabled={saving}>
+                <Ionicons name="checkmark" size={rs(18)} color="#FFFFFF" />
                 <Text style={s.saveBtnText}>{saving ? 'Saving...' : 'Save Draft'}</Text>
               </TouchableOpacity>
             </View>
@@ -104,11 +107,11 @@ export default function DraftsScreen({ navigation, user }) {
         )}
 
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: 40 }} />
+          <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : drafts.length === 0 && !showForm ? (
           <FadeSlideIn delay={150}>
             <View style={s.emptyState}>
-              <Text style={s.emptyIcon}>✏️</Text>
+              <Ionicons name="create-outline" size={rs(48)} color={COLORS.inkFaint} />
               <Text style={s.emptyTitle}>No drafts yet</Text>
               <Text style={s.emptyMsg}>Start a new quotation and save it as a draft.</Text>
             </View>
@@ -123,7 +126,7 @@ export default function DraftsScreen({ navigation, user }) {
               >
                 <View style={s.rowLeft}>
                   <View style={s.rowIconWrap}>
-                    <Text style={s.rowIcon}>✏️</Text>
+                    <Ionicons name="create" size={rs(20)} color={COLORS.draft} />
                   </View>
                   <View style={s.rowTextWrap}>
                     <Text style={s.rowTitle} numberOfLines={1}>{item.supplier}</Text>
@@ -140,7 +143,7 @@ export default function DraftsScreen({ navigation, user }) {
                     <View style={[s.badgeDot, { backgroundColor: COLORS.draft }]} />
                     <Text style={[s.badgeText, { color: COLORS.draft }]}>Draft</Text>
                   </View>
-                  <Text style={s.chevron}>›</Text>
+                  <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
                 </View>
               </PressableCard>
             </FadeSlideIn>
@@ -157,7 +160,7 @@ export default function DraftsScreen({ navigation, user }) {
             accessibilityRole="button"
             accessibilityLabel="Create new draft"
           >
-            <Text style={s.fabIcon}>+</Text>
+            <Ionicons name="add" size={rs(22)} color="#FFFFFF" />
             <Text style={s.fabText}>New Draft</Text>
           </TouchableOpacity>
         </FadeSlideIn>
@@ -168,73 +171,69 @@ export default function DraftsScreen({ navigation, user }) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surface },
-  heroBg: { height: 180 },
+  heroBg: { height: rs(180) },
   heroImageStyle: { resizeMode: 'cover' },
-  heroOverlay: { flex: 1, backgroundColor: COLORS.overlayDeep, justifyContent: 'flex-end', paddingBottom: SPACING.xl },
-  heroRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: SPACING.xxl, gap: SPACING.lg },
-  backBtn: { width: 44, height: 44, borderRadius: RADII.lg, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
-  backArrow: { fontSize: 20, color: '#FFFFFF', fontWeight: '600' },
+  heroOverlay: { flex: 1, backgroundColor: COLORS.overlayDeep, justifyContent: 'flex-end', paddingBottom: rs(SPACING.xl) },
+  heroRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(SPACING.xxl), gap: rs(SPACING.lg) },
+  backBtn: { width: rs(44), height: rs(44), borderRadius: RADII.lg, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: rs(1), borderColor: 'rgba(255,255,255,0.2)' },
   heroTextWrap: { flex: 1 },
-  heroTitle: { fontSize: 24, fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display },
-  heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: 2 },
+  heroTitle: { fontSize: rs(24), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display },
+  heroSub: { fontSize: rs(12), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: rs(2) },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: SPACING.xl, paddingTop: SPACING.lg, paddingBottom: 100 },
-  statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.lg, paddingHorizontal: SPACING.xs },
-  statsCount: { fontSize: 13, color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
-  filterBtn: { paddingHorizontal: SPACING.lg, paddingVertical: SPACING.sm, borderRadius: RADII.pill, backgroundColor: COLORS.brandGlow, borderWidth: 1, borderColor: COLORS.cardBorder },
-  filterText: { fontSize: 12, color: COLORS.brand, fontFamily: FONTS.body, fontWeight: '600' },
+  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) },
+  statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: rs(SPACING.lg), paddingHorizontal: rs(SPACING.xs) },
+  statsCount: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
+  filterBtn: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(SPACING.lg), paddingVertical: rs(SPACING.sm), borderRadius: RADII.pill, backgroundColor: COLORS.brandGlow, borderWidth: rs(1), borderColor: COLORS.cardBorder, gap: rs(4) },
+  filterText: { fontSize: rs(12), color: COLORS.brand, fontFamily: FONTS.body, fontWeight: '600' },
   formCard: {
-    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: SPACING.xl,
-    marginBottom: SPACING.lg, borderWidth: 1, borderColor: COLORS.cardBorder,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4, shadowRadius: 8, elevation: 2,
+    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),
+    marginBottom: rs(SPACING.lg), borderWidth: rs(1), borderColor: COLORS.cardBorder,
+    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: rs(2) },
+    shadowOpacity: 0.4, shadowRadius: rs(8), elevation: 2,
   },
-  formTitle: { fontSize: 16, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: SPACING.md },
+  formTitle: { fontSize: rs(16), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(SPACING.md) },
   formInput: {
-    backgroundColor: COLORS.surface, borderRadius: RADII.md, borderWidth: 1,
-    borderColor: COLORS.cardBorder, paddingHorizontal: SPACING.md, paddingVertical: 12,
-    fontSize: 14, color: COLORS.ink, fontFamily: FONTS.body, marginBottom: SPACING.md,
+    backgroundColor: COLORS.surface, borderRadius: RADII.md, borderWidth: rs(1),
+    borderColor: COLORS.cardBorder, paddingHorizontal: rs(SPACING.md), paddingVertical: rs(12),
+    fontSize: rs(14), color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(SPACING.md),
   },
   saveBtn: {
-    backgroundColor: COLORS.brand, borderRadius: RADII.lg, paddingVertical: 14,
-    alignItems: 'center', marginTop: SPACING.sm,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: rs(6),
+    backgroundColor: COLORS.brand, borderRadius: RADII.lg, paddingVertical: rs(14),
+    marginTop: rs(SPACING.sm),
   },
-  saveBtnText: { fontSize: 15, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
-  emptyState: { alignItems: 'center', paddingTop: 40 },
-  emptyIcon: { fontSize: 36, marginBottom: SPACING.md },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginBottom: SPACING.sm },
-  emptyMsg: { fontSize: 13, color: COLORS.inkLight, fontFamily: FONTS.body, textAlign: 'center', lineHeight: 19, paddingHorizontal: SPACING.xxxl },
+  saveBtnText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
+  emptyState: { alignItems: 'center', paddingTop: rs(40) },
+  emptyTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, marginTop: rs(SPACING.md), marginBottom: rs(SPACING.sm) },
+  emptyMsg: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, textAlign: 'center', lineHeight: rs(19), paddingHorizontal: rs(SPACING.xxxl) },
   rowCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: COLORS.card, borderRadius: RADII.lg, paddingVertical: SPACING.lg,
-    paddingHorizontal: SPACING.lg, marginBottom: SPACING.md, borderWidth: 1,
+    backgroundColor: COLORS.card, borderRadius: RADII.lg, paddingVertical: rs(SPACING.lg),
+    paddingHorizontal: rs(SPACING.lg), marginBottom: rs(SPACING.md), borderWidth: rs(1),
     borderColor: COLORS.cardBorder, shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.6,
-    shadowRadius: 8, elevation: 2,
+    shadowOffset: { width: 0, height: rs(2) }, shadowOpacity: 0.6,
+    shadowRadius: rs(8), elevation: 2,
   },
-  rowLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: SPACING.md },
-  rowIconWrap: { width: 44, height: 44, borderRadius: RADII.md, backgroundColor: COLORS.draftBg, alignItems: 'center', justifyContent: 'center', marginRight: SPACING.md },
-  rowIcon: { fontSize: 20 },
+  rowLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: rs(SPACING.md) },
+  rowIconWrap: { width: rs(44), height: rs(44), borderRadius: RADII.md, backgroundColor: COLORS.draftBg, alignItems: 'center', justifyContent: 'center', marginRight: rs(SPACING.md) },
   rowTextWrap: { flex: 1 },
-  rowTitle: { fontSize: 15, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: 2 },
-  rowSub: { fontSize: 13, color: COLORS.inkMid, fontFamily: FONTS.body, marginBottom: SPACING.xs },
+  rowTitle: { fontSize: rs(15), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(2) },
+  rowSub: { fontSize: rs(13), color: COLORS.inkMid, fontFamily: FONTS.body, marginBottom: rs(SPACING.xs) },
   rowMeta: { flexDirection: 'row', alignItems: 'center' },
-  rowDate: { fontSize: 11, color: COLORS.inkLight, fontFamily: FONTS.mono },
-  rowDot: { fontSize: 11, color: COLORS.inkFaint },
-  rowAmount: { fontSize: 11, fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.mono },
-  rowRight: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
-  badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: RADII.pill, gap: 5 },
-  badgeDot: { width: 6, height: 6, borderRadius: 3 },
-  badgeText: { fontSize: 11, fontWeight: '600', fontFamily: FONTS.body },
-  chevron: { fontSize: 22, color: COLORS.inkFaint, fontWeight: '300' },
+  rowDate: { fontSize: rs(11), color: COLORS.inkLight, fontFamily: FONTS.mono },
+  rowDot: { fontSize: rs(11), color: COLORS.inkFaint },
+  rowAmount: { fontSize: rs(11), fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.mono },
+  rowRight: { flexDirection: 'row', alignItems: 'center', gap: rs(SPACING.sm) },
+  badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(10), paddingVertical: rs(5), borderRadius: RADII.pill, gap: rs(5) },
+  badgeDot: { width: rs(6), height: rs(6), borderRadius: rs(3) },
+  badgeText: { fontSize: rs(11), fontWeight: '600', fontFamily: FONTS.body },
   fab: {
-    position: 'absolute', bottom: 28, right: SPACING.xl,
+    position: 'absolute', bottom: rs(28), right: rs(SPACING.xl),
     flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.brand,
-    borderRadius: RADII.xxl, paddingLeft: 18, paddingRight: SPACING.xxl,
-    paddingVertical: SPACING.xl, gap: SPACING.sm,
-    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4, shadowRadius: 14, elevation: 8,
+    borderRadius: RADII.xxl, paddingLeft: rs(18), paddingRight: rs(SPACING.xxl),
+    paddingVertical: rs(SPACING.xl), gap: rs(SPACING.sm),
+    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(6) },
+    shadowOpacity: 0.4, shadowRadius: rs(14), elevation: 8,
   },
-  fabIcon: { fontSize: 20, color: '#FFFFFF', fontWeight: '700' },
-  fabText: { fontSize: 15, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
+  fabText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });

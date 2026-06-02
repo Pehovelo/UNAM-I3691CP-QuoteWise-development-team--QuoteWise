@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, ImageBackground, SafeAreaView, Alert, ActivityIndicator,
+  StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, width } from '../constants/designTokens';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, width } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeQuotations } from '../services/firestoreService';
 
@@ -29,10 +30,10 @@ export default function HomeScreen({ navigation, user }) {
     : 'QW';
 
   const tiles = [
-    { label: 'Quotations', count: activeCount, icon: '🗂️', screen: 'Quotations', color: COLORS.brand, desc: 'Pending & active' },
-    { label: 'Saved', count: savedCount, icon: '🔖', screen: 'Saved', color: COLORS.saved, desc: 'Archived quotes' },
-    { label: 'Drafts', count: draftCount, icon: '✏️', screen: 'Drafts', color: COLORS.draft, desc: 'In progress' },
-    { label: 'Settings', count: null, icon: '⚙️', screen: 'Settings', color: COLORS.inkLight, desc: 'Preferences' },
+    { label: 'Quotations', count: activeCount, icon: 'document-text', screen: 'Quotations', color: COLORS.brand, desc: 'Pending & active' },
+    { label: 'Saved', count: savedCount, icon: 'bookmark', screen: 'Saved', color: COLORS.saved, desc: 'Archived quotes' },
+    { label: 'Drafts', count: draftCount, icon: 'create', screen: 'Drafts', color: COLORS.draft, desc: 'In progress' },
+    { label: 'Settings', count: null, icon: 'settings', screen: 'Settings', color: COLORS.inkLight, desc: 'Preferences' },
   ];
 
   return (
@@ -95,7 +96,7 @@ export default function HomeScreen({ navigation, user }) {
           <FadeSlideIn key={tile.label} delay={200 + i * 70} style={s.tileWrapper}>
             <PressableCard onPress={() => navigation.navigate(tile.screen)} style={s.tile}>
               <View style={[s.tileIconWrap, { backgroundColor: `${tile.color}14` }]}>
-                <Text style={s.tileIcon}>{tile.icon}</Text>
+                <Ionicons name={tile.icon} size={rs(22)} color={tile.color} />
               </View>
               <Text style={s.tileLabel}>{tile.label}</Text>
               <Text style={s.tileDesc}>{tile.desc}</Text>
@@ -105,7 +106,7 @@ export default function HomeScreen({ navigation, user }) {
                     <Text style={s.tilePillText}>{loading ? '...' : tile.count}</Text>
                   </View>
                 )}
-                <Text style={[s.tileChevron, { color: tile.color }]}>›</Text>
+                <Ionicons name="chevron-forward" size={rs(20)} color={tile.color} />
               </View>
             </PressableCard>
           </FadeSlideIn>
@@ -117,51 +118,49 @@ export default function HomeScreen({ navigation, user }) {
 
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.surface },
-  heroBg: { height: 200 },
+  heroBg: { height: rs(200) },
   heroImageStyle: { resizeMode: 'cover' },
-  heroOverlay: { flex: 1, backgroundColor: 'rgba(240,90,0,0.65)', justifyContent: 'flex-end' },
+  heroOverlay: { flex: 1, backgroundColor: COLORS.overlay, justifyContent: 'flex-end' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: SPACING.xxl, paddingBottom: SPACING.xxl,
+    paddingHorizontal: rs(SPACING.xxl), paddingBottom: rs(SPACING.xxl),
   },
-  greeting: { fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 2 },
-  userName: { fontSize: 26, fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: -0.5 },
+  greeting: { fontSize: rs(13), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: rs(1.5), marginBottom: rs(2) },
+  userName: { fontSize: rs(26), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: rs(-0.5) },
   avatar: {
-    width: 44, height: 44, borderRadius: RADII.lg,
-    backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1.5,
+    width: rs(44), height: rs(44), borderRadius: RADII.lg,
+    backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: rs(1.5),
     borderColor: 'rgba(255,255,255,0.4)', alignItems: 'center', justifyContent: 'center',
   },
-  avatarText: { fontSize: 12, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body, letterSpacing: 0.5 },
-  summaryContainer: { marginTop: -28, zIndex: 10 },
+  avatarText: { fontSize: rs(12), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body, letterSpacing: rs(0.5) },
+  summaryContainer: { marginTop: rs(-28), zIndex: 10 },
   summaryStrip: {
-    flexDirection: 'row', marginHorizontal: SPACING.xxl, backgroundColor: COLORS.brand,
-    borderRadius: RADII.xxl, paddingVertical: SPACING.xl,
-    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.35,
-    shadowRadius: 16, elevation: 8,
+    flexDirection: 'row', marginHorizontal: rs(SPACING.xxl), backgroundColor: COLORS.brand,
+    borderRadius: RADII.xxl, paddingVertical: rs(SPACING.xl),
+    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(8) }, shadowOpacity: 0.35,
+    shadowRadius: rs(16), elevation: 8,
   },
   summaryItem: { flex: 1, alignItems: 'center' },
-  summaryNum: { fontSize: 26, fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: -0.5 },
-  summaryLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: 2, textTransform: 'uppercase', letterSpacing: 1 },
-  summaryDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: SPACING.xs },
-  sectionHeader: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: SPACING.md },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, letterSpacing: -0.3 },
-  sectionSub: { fontSize: 12, color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: 2 },
+  summaryNum: { fontSize: rs(26), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: rs(-0.5) },
+  summaryLabel: { fontSize: rs(11), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: rs(2), textTransform: 'uppercase', letterSpacing: rs(1) },
+  summaryDivider: { width: rs(1), backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: rs(SPACING.xs) },
+  sectionHeader: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxl), paddingBottom: rs(SPACING.md) },
+  sectionTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, letterSpacing: rs(-0.3) },
+  sectionSub: { fontSize: rs(12), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(2) },
   tilesScroll: { flex: 1 },
-  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: SPACING.lg, gap: SPACING.md, paddingBottom: SPACING.xxxl },
-  tileWrapper: { width: (width - 44) / 2 },
+  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: rs(SPACING.lg), gap: rs(SPACING.md), paddingBottom: rs(SPACING.xxxl) },
+  tileWrapper: { width: (width - rs(44)) / 2 },
   tile: {
-    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: SPACING.xl,
-    borderWidth: 1, borderColor: COLORS.cardBorder,
-    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.6, shadowRadius: 12, elevation: 3,
-    minHeight: 160, justifyContent: 'space-between',
+    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),
+    borderWidth: rs(1), borderColor: COLORS.cardBorder,
+    shadowColor: COLORS.shadow, shadowOffset: { width: 0, height: rs(4) },
+    shadowOpacity: 0.6, shadowRadius: rs(12), elevation: 3,
+    minHeight: rs(160), justifyContent: 'space-between',
   },
-  tileIconWrap: { width: 48, height: 48, borderRadius: RADII.lg, alignItems: 'center', justifyContent: 'center', marginBottom: SPACING.md },
-  tileIcon: { fontSize: 22 },
-  tileLabel: { fontSize: 16, fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: 2 },
-  tileDesc: { fontSize: 11, color: COLORS.inkLight, fontFamily: FONTS.body, marginBottom: SPACING.md },
+  tileIconWrap: { width: rs(48), height: rs(48), borderRadius: RADII.lg, alignItems: 'center', justifyContent: 'center', marginBottom: rs(SPACING.md) },
+  tileLabel: { fontSize: rs(16), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(2) },
+  tileDesc: { fontSize: rs(11), color: COLORS.inkLight, fontFamily: FONTS.body, marginBottom: rs(SPACING.md) },
   tileBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  tilePill: { borderRadius: RADII.md, paddingHorizontal: 8, paddingVertical: 3, minWidth: 24, alignItems: 'center' },
-  tilePillText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
-  tileChevron: { fontSize: 22, fontWeight: '300' },
+  tilePill: { borderRadius: RADII.md, paddingHorizontal: rs(8), paddingVertical: rs(3), minWidth: rs(24), alignItems: 'center' },
+  tilePillText: { fontSize: rs(11), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });
