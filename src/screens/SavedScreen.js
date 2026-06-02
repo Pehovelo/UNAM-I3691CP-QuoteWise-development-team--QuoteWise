@@ -23,7 +23,7 @@ export default function SavedScreen({ navigation, user }) {
   }, [user?.uid]);
 
   const getCurrencySymbol = (code) => {
-    const map = { NAD: 'N$', ZAR: 'R', USD: '$', EUR: '\u20AC', GBP: '\u00A3', BWP: 'P' };
+    const map = { NAD: 'N$', USD: '$', ZAR: 'R', BWP: 'P', ZMW: 'ZK' };
     return map[code] || 'N$';
   };
 

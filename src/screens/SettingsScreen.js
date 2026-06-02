@@ -9,69 +9,40 @@ import { logoutUser, deleteUserAccount, auth } from '../services/authService';
 import { deleteAllUserData } from '../services/firestoreService';
 
 const TERMS_TEXT = `QuoteWise Terms of Service
+Effective: June 2026
 
-Last updated: June 2026
-
-1. Use of Service
-QuoteWise is provided as-is for managing business quotations. You are responsible for the accuracy of your quotes and any business decisions made based on them.
+1. Service
+QuoteWise is a quotation management tool for Namibian businesses and freelancers. You are responsible for the accuracy of all quotes you create.
 
 2. Data
-Your quotation data is stored securely via Firebase. We do not share your data with third parties. All data transmission is encrypted using industry-standard protocols.
+Your data is stored securely via Firebase infrastructure. We do not sell or share your data with any third parties.
 
-3. Account
-You are responsible for maintaining the security of your account credentials. You must not share your password with any other person or entity. You must notify us immediately of any unauthorised use of your account.
+3. Account Security
+You are responsible for keeping your login credentials secure.
 
-4. Liability
-QuoteWise is not liable for any financial decisions made based on quotes generated in this app. The app provides tools for quotation management only and does not constitute financial or legal advice.
+4. Limitation of Liability
+QuoteWise is not responsible for financial outcomes resulting from quotes created using this application.
 
-5. Intellectual Property
-All content, design, and functionality of the QuoteWise app are the property of QuoteWise and its developers. You may not reproduce, distribute, or create derivative works without written permission.
-
-6. Changes
-We may update these terms at any time. Continued use of the app constitutes acceptance of the updated terms. Significant changes will be communicated through the app or via email.
-
-7. Termination
-We reserve the right to suspend or terminate your account if you violate these terms. Upon termination, your data will be deleted in accordance with our data retention policy.
+5. Governing Law
+These terms are governed by the laws of the Republic of Namibia.
 
 Contact: support@quotewise.app`;
 
 const PRIVACY_TEXT = `QuoteWise Privacy Policy
+Effective: June 2026
 
-Last updated: June 2026
-
-What we collect:
-- Your email address (for authentication)
+Data we collect:
+- Email address (authentication only)
 - Quotation data you create (stored in Firebase Firestore)
-- Display name and profile information you provide
-- Basic usage data (via Firebase Analytics, if enabled)
 
-What we do NOT collect:
-- Your payment information
-- Your contacts or address book
-- Your location data
-- Access to your device camera or microphone
-- Personal files from your device
+Data we do NOT collect:
+- Payment information
+- Device contacts
+- Location data
 
-How we use your data:
-- To authenticate and secure your account
-- To store and retrieve your quotation data
-- To improve app performance and user experience
-- To send critical account-related notifications
-
-Your data:
-- You can delete your account and all data at any time from Settings
-- Data is stored on Google Firebase servers (africa-south1 region)
-- All data is encrypted in transit and at rest
-- We comply with applicable Namibian data protection regulations
-
-Data retention:
-- Active account data is retained as long as your account exists
-- Upon account deletion, all personal data is permanently removed within 30 days
-- Anonymised usage statistics may be retained for analytics purposes
-
-Third-party services:
-- Firebase (Google) for authentication and data storage
-- Expo for application delivery and updates
+Your rights:
+- You may delete your account and all associated data at any time.
+- Data is stored on Google Firebase servers (GDPR and POPIA compliant).
 
 Contact: privacy@quotewise.app`;
 
@@ -133,7 +104,7 @@ export default function SettingsScreen({ navigation, user }) {
       items: [
         { icon: 'document-text-outline', label: 'Terms of Service', onPress: () => setShowTerms(true) },
         { icon: 'shield-outline', label: 'Privacy Policy', onPress: () => setShowPrivacy(true) },
-        { icon: 'information-circle-outline', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v4.1.0\nExpo SDK 55\nFirebase JS SDK') },
+        { icon: 'information-circle-outline', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v4.7.0\nExpo SDK 55\nFirebase JS SDK') },
       ],
     },
   ];
@@ -189,7 +160,7 @@ export default function SettingsScreen({ navigation, user }) {
           </TouchableOpacity>
         </FadeSlideIn>
 
-        <Text style={s.versionText}>QuoteWise v4.1.0 · Expo SDK 55 · Firebase</Text>
+        <Text style={s.versionText}>QuoteWise v4.7.0 · Expo SDK 55 · Firebase</Text>
       </ScrollView>
 
       {/* Terms of Service Modal */}

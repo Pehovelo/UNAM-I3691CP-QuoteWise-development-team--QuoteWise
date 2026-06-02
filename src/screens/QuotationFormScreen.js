@@ -12,11 +12,10 @@ import { auth } from '../services/authService';
 
 const CURRENCIES = [
   { code: 'NAD', symbol: 'N$', label: 'Namibian Dollar' },
-  { code: 'ZAR', symbol: 'R', label: 'South African Rand' },
   { code: 'USD', symbol: '$', label: 'US Dollar' },
-  { code: 'EUR', symbol: '\u20AC', label: 'Euro' },
-  { code: 'GBP', symbol: '\u00A3', label: 'British Pound' },
+  { code: 'ZAR', symbol: 'R', label: 'South African Rand' },
   { code: 'BWP', symbol: 'P', label: 'Botswana Pula' },
+  { code: 'ZMW', symbol: 'ZK', label: 'Zambian Kwacha' },
 ];
 
 const emptyItem = () => ({ description: '', quantity: 1, unitPrice: 0, total: 0 });
