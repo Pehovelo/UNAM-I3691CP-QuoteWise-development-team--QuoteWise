@@ -5,6 +5,7 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   onAuthStateChanged,
+  deleteUser,
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
@@ -23,6 +24,7 @@ export async function registerUser(email, password, displayName) {
     displayName,
     email,
     role: 'student',
+    phone: '',
     createdAt: serverTimestamp(),
   });
 
@@ -48,6 +50,21 @@ export async function resetPassword(email) {
   await sendPasswordResetEmail(auth, email);
 }
 
+// Update display name in Firebase Auth
+export async function updateUserDisplayName(displayName) {
+  if (auth.currentUser) {
+    await updateProfile(auth.currentUser, { displayName });
+  }
+}
+
+// Delete user account
+export async function deleteUserAccount() {
+  if (auth.currentUser) {
+    await deleteUser(auth.currentUser);
+    await AsyncStorage.removeItem(AUTH_PERSIST_KEY);
+  }
+}
+
 // Listen for auth state changes
 export function onAuthChange(callback) {
   return onAuthStateChanged(auth, callback);
@@ -58,3 +75,6 @@ export async function wasUserLoggedIn() {
   const val = await AsyncStorage.getItem(AUTH_PERSIST_KEY);
   return val === 'true';
 }
+
+// Re-export auth for direct access
+export { auth };

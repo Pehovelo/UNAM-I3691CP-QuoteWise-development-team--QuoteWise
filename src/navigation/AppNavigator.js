@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
@@ -16,6 +16,9 @@ import SavedScreen from '../screens/SavedScreen';
 import DraftsScreen from '../screens/DraftsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import QuotationFormScreen from '../screens/QuotationFormScreen';
+import QuotationDetailScreen from '../screens/QuotationDetailScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -99,6 +102,9 @@ export default function AppNavigator({ user, showSplash, onSplashComplete }) {
             <Stack.Screen name="Settings">
               {(props) => <SettingsScreen {...props} user={user} />}
             </Stack.Screen>
+            <Stack.Screen name="QuotationForm" component={QuotationFormScreen} />
+            <Stack.Screen name="QuotationDetail" component={QuotationDetailScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           </>
         )}

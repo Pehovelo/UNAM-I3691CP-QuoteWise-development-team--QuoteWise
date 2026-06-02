@@ -33,6 +33,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "owner": "quotewises-organization"
+    "owner": "quotewises-organization",
+    "plugins": [
+      "expo-sharing"
+    ]
   }
 }

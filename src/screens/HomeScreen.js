@@ -6,40 +6,37 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, width } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
-import { subscribeQuotations } from '../services/firestoreService';
+import { subscribeQuotationCounts } from '../services/firestoreService';
+import { auth } from '../services/authService';
 
 export default function HomeScreen({ navigation, user }) {
-  const [quotations, setQuotations] = useState([]);
+  const [counts, setCounts] = useState({ active: 0, draft: 0, saved: 0, total: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = subscribeQuotations((items) => {
-      setQuotations(items);
+    if (!user?.uid) return;
+    const unsub = subscribeQuotationCounts(user.uid, (c) => {
+      setCounts(c);
       setLoading(false);
     });
     return unsub;
-  }, []);
+  }, [user?.uid]);
 
-  const pendingCount = quotations.filter(q => q.status === 'Pending').length;
-  const draftCount = quotations.filter(q => q.status === 'Draft').length;
-  const savedCount = quotations.filter(q => q.status === 'Saved').length;
-  const activeCount = pendingCount + draftCount;
-
+  const displayName = user?.displayName || (user?.email ? user.email.split('@')[0] : 'QuoteWise');
   const initials = user?.displayName
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'QW';
 
   const tiles = [
-    { label: 'Quotations', count: activeCount, icon: 'document-text', screen: 'Quotations', color: COLORS.brand, desc: 'Pending & active' },
-    { label: 'Saved', count: savedCount, icon: 'bookmark', screen: 'Saved', color: COLORS.saved, desc: 'Archived quotes' },
-    { label: 'Drafts', count: draftCount, icon: 'create', screen: 'Drafts', color: COLORS.draft, desc: 'In progress' },
+    { label: 'Quotations', count: counts.active + counts.draft, icon: 'document-text', screen: 'Quotations', color: COLORS.brand, desc: 'Active estimates' },
+    { label: 'Saved', count: counts.saved, icon: 'bookmark', screen: 'Saved', color: COLORS.saved, desc: 'Archived quotes' },
+    { label: 'Drafts', count: counts.draft, icon: 'create', screen: 'Drafts', color: COLORS.draft, desc: 'In progress' },
     { label: 'Settings', count: null, icon: 'settings', screen: 'Settings', color: COLORS.inkLight, desc: 'Preferences' },
   ];
 
   return (
     <View style={s.container}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.brandDeep} />
-
       <ImageBackground source={IMAGES.homeHeader} style={s.heroBg} imageStyle={s.heroImageStyle}>
         <View style={s.heroOverlay}>
           <SafeAreaView>
@@ -47,7 +44,7 @@ export default function HomeScreen({ navigation, user }) {
               <View style={s.header}>
                 <View>
                   <Text style={s.greeting}>Good morning</Text>
-                  <Text style={s.userName}>{user?.displayName || 'QuoteWise'}</Text>
+                  <Text style={s.userName}>{displayName}</Text>
                 </View>
                 <TouchableOpacity
                   style={s.avatar}
@@ -67,17 +64,17 @@ export default function HomeScreen({ navigation, user }) {
         <FadeSlideIn delay={100} direction="up">
           <View style={s.summaryStrip}>
             <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : activeCount}</Text>
+              <Text style={s.summaryNum}>{loading ? '—' : counts.active}</Text>
               <Text style={s.summaryLabel}>Active</Text>
             </View>
             <View style={s.summaryDivider} />
             <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : pendingCount}</Text>
-              <Text style={s.summaryLabel}>Pending</Text>
+              <Text style={s.summaryNum}>{loading ? '—' : counts.draft}</Text>
+              <Text style={s.summaryLabel}>Draft</Text>
             </View>
             <View style={s.summaryDivider} />
             <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : savedCount}</Text>
+              <Text style={s.summaryNum}>{loading ? '—' : counts.saved}</Text>
               <Text style={s.summaryLabel}>Saved</Text>
             </View>
           </View>
@@ -112,6 +109,20 @@ export default function HomeScreen({ navigation, user }) {
           </FadeSlideIn>
         ))}
       </ScrollView>
+
+      {/* FAB — New Quotation */}
+      <FadeSlideIn delay={400}>
+        <TouchableOpacity
+          style={s.fab}
+          activeOpacity={0.85}
+          onPress={() => navigation.navigate('QuotationForm')}
+          accessibilityRole="button"
+          accessibilityLabel="Create new quotation"
+        >
+          <Ionicons name="add" size={rs(22)} color="#FFFFFF" />
+          <Text style={s.fabText}>New Quote</Text>
+        </TouchableOpacity>
+      </FadeSlideIn>
     </View>
   );
 }
@@ -163,4 +174,13 @@ const s = StyleSheet.create({
   tileBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   tilePill: { borderRadius: RADII.md, paddingHorizontal: rs(8), paddingVertical: rs(3), minWidth: rs(24), alignItems: 'center' },
   tilePillText: { fontSize: rs(11), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
+  fab: {
+    position: 'absolute', bottom: rs(28), right: rs(SPACING.xl),
+    flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.brand,
+    borderRadius: RADII.xxl, paddingLeft: rs(18), paddingRight: rs(SPACING.xxl),
+    paddingVertical: rs(SPACING.xl), gap: rs(SPACING.sm),
+    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(6) },
+    shadowOpacity: 0.4, shadowRadius: rs(14), elevation: 8,
+  },
+  fabText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });

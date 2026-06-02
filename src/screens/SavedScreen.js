@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, ImageBackground, SafeAreaView, Alert, ActivityIndicator,
+  StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
-import { subscribeSavedQuotations } from '../services/firestoreService';
+import { subscribeUserQuotationsByStatus } from '../services/firestoreService';
+import { auth } from '../services/authService';
 
 export default function SavedScreen({ navigation, user }) {
   const [saved, setSaved] = useState([]);
@@ -14,12 +15,17 @@ export default function SavedScreen({ navigation, user }) {
 
   useEffect(() => {
     if (!user?.uid) return;
-    const unsub = subscribeSavedQuotations(user.uid, (items) => {
+    const unsub = subscribeUserQuotationsByStatus(user.uid, 'saved', (items) => {
       setSaved(items);
       setLoading(false);
     });
     return unsub;
   }, [user?.uid]);
+
+  const getCurrencySymbol = (code) => {
+    const map = { NAD: 'N$', ZAR: 'R', USD: '$', EUR: '\u20AC', GBP: '\u00A3', BWP: 'P' };
+    return map[code] || 'N$';
+  };
 
   return (
     <View style={s.container}>
@@ -29,9 +35,6 @@ export default function SavedScreen({ navigation, user }) {
           <SafeAreaView>
             <FadeSlideIn>
               <View style={s.heroRow}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityRole="button">
-                  <Ionicons name="arrow-back" size={rs(22)} color="#FFFFFF" />
-                </TouchableOpacity>
                 <View style={s.heroTextWrap}>
                   <Text style={s.heroTitle}>Saved</Text>
                   <Text style={s.heroSub}>Archived & saved estimates</Text>
@@ -60,31 +63,37 @@ export default function SavedScreen({ navigation, user }) {
             </View>
           </FadeSlideIn>
         ) : (
-          saved.map((item, i) => (
-            <FadeSlideIn key={item.id} delay={i * 80}>
-              <PressableCard
-                onPress={() => Alert.alert(item.project || item.text, `${item.supplier || item.author}\n${item.amount || ''}`)}
-                style={s.rowCard}
-              >
-                <View style={s.rowLeft}>
-                  <View style={s.rowIconWrap}>
-                    <Ionicons name="bookmark" size={rs(20)} color={COLORS.saved} />
+          saved.map((item, i) => {
+            const sym = getCurrencySymbol(item.currency);
+            return (
+              <FadeSlideIn key={item.id} delay={i * 80}>
+                <PressableCard
+                  onPress={() => navigation.navigate('QuotationDetail', { quotation: item })}
+                  style={s.rowCard}
+                >
+                  <View style={s.rowLeft}>
+                    <View style={s.rowIconWrap}>
+                      <Ionicons name="bookmark" size={rs(20)} color={COLORS.saved} />
+                    </View>
+                    <View style={s.rowTextWrap}>
+                      <Text style={s.rowTitle} numberOfLines={1}>{item.title || item.clientName}</Text>
+                      <Text style={s.rowSub} numberOfLines={1}>{item.clientName}</Text>
+                      <View style={s.rowMeta}>
+                        {item.total ? <Text style={s.rowAmount}>{sym} {item.total.toFixed(2)}</Text> : null}
+                      </View>
+                    </View>
                   </View>
-                  <View style={s.rowTextWrap}>
-                    <Text style={s.rowTitle} numberOfLines={1}>{item.supplier || item.text}</Text>
-                    <Text style={s.rowSub} numberOfLines={1}>{item.project || item.author}</Text>
+                  <View style={s.rowRight}>
+                    <View style={[s.badge, { backgroundColor: COLORS.savedBg }]}>
+                      <View style={[s.badgeDot, { backgroundColor: COLORS.saved }]} />
+                      <Text style={[s.badgeText, { color: COLORS.saved }]}>Saved</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
                   </View>
-                </View>
-                <View style={s.rowRight}>
-                  <View style={[s.badge, { backgroundColor: COLORS.savedBg }]}>
-                    <View style={[s.badgeDot, { backgroundColor: COLORS.saved }]} />
-                    <Text style={[s.badgeText, { color: COLORS.saved }]}>Saved</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
-                </View>
-              </PressableCard>
-            </FadeSlideIn>
-          ))
+                </PressableCard>
+              </FadeSlideIn>
+            );
+          })
         )}
       </ScrollView>
     </View>
@@ -97,7 +106,6 @@ const s = StyleSheet.create({
   heroImageStyle: { resizeMode: 'cover' },
   heroOverlay: { flex: 1, backgroundColor: COLORS.overlayDeep, justifyContent: 'flex-end', paddingBottom: rs(SPACING.xl) },
   heroRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(SPACING.xxl), gap: rs(SPACING.lg) },
-  backBtn: { width: rs(44), height: rs(44), borderRadius: RADII.lg, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center', borderWidth: rs(1), borderColor: 'rgba(255,255,255,0.2)' },
   heroTextWrap: { flex: 1 },
   heroTitle: { fontSize: rs(24), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: rs(-0.5) },
   heroSub: { fontSize: rs(12), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, marginTop: rs(2) },
@@ -121,6 +129,8 @@ const s = StyleSheet.create({
   rowTextWrap: { flex: 1 },
   rowTitle: { fontSize: rs(15), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(2) },
   rowSub: { fontSize: rs(13), color: COLORS.inkMid, fontFamily: FONTS.body },
+  rowMeta: { flexDirection: 'row', alignItems: 'center' },
+  rowAmount: { fontSize: rs(12), fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.mono },
   rowRight: { flexDirection: 'row', alignItems: 'center', gap: rs(SPACING.sm) },
   badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(10), paddingVertical: rs(5), borderRadius: RADII.pill, gap: rs(5) },
   badgeDot: { width: rs(6), height: rs(6), borderRadius: rs(3) },
