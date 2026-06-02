@@ -36,9 +36,9 @@ export default function SettingsScreen({ navigation, user }) {
     {
       title: 'About',
       items: [
-        { icon: 'document-text-outline', label: 'Terms of Service', onPress: () => Alert.alert('Terms', 'QuoteWise Terms of Service v3.0.0') },
-        { icon: 'shield-outline', label: 'Privacy Policy', onPress: () => Alert.alert('Privacy', 'QuoteWise Privacy Policy v3.0.0') },
-        { icon: 'information-circle-outline', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v3.0.0\nExpo SDK 55\nFirebase JS SDK') },
+        { icon: 'document-text-outline', label: 'Terms of Service', onPress: () => Alert.alert('Terms', 'QuoteWise Terms of Service v4.1.0') },
+        { icon: 'shield-outline', label: 'Privacy Policy', onPress: () => Alert.alert('Privacy', 'QuoteWise Privacy Policy v4.1.0') },
+        { icon: 'information-circle-outline', label: 'App Version', onPress: () => Alert.alert('Version', 'QuoteWise v4.1.0\nExpo SDK 55\nFirebase JS SDK') },
       ],
     },
   ];
@@ -86,7 +86,7 @@ export default function SettingsScreen({ navigation, user }) {
           </TouchableOpacity>
         </FadeSlideIn>
 
-        <Text style={s.versionText}>QuoteWise v3.0.0 · Expo SDK 55 · Firebase</Text>
+        <Text style={s.versionText}>QuoteWise v4.1.0 · Expo SDK 55 · Firebase</Text>
       </ScrollView>
     </View>
   );
