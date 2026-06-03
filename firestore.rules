@@ -29,21 +29,30 @@ service cloud.firestore {
     }
 
     // ─── Quotes Collection (Marketplace) ────────────────────────────────
-    // Any authenticated user can read open quotes; only the client can modify/delete
+    // Any authenticated user can read quotes; only the client can modify/delete
     match /quotes/{quoteId} {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated();
-      allow update: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+      allow update: if isAuthenticated() && (
+        resource.data.clientId == request.auth.uid ||
+        (request.resource.data.keys().hasAll(['status']) &&
+         request.resource.data.clientId == resource.data.clientId)
+      );
       allow delete: if isAuthenticated() && resource.data.clientId == request.auth.uid;
 
-      // Responses subcollection — providers can create, client can read/update
+      // Responses subcollection — providers can create, anyone can read,
+      // only the response owner or the quote's client can update/delete
       match /responses/{responseId} {
         allow read: if isAuthenticated();
         allow create: if isAuthenticated();
-        allow update: if isAuthenticated();
-        allow delete: if isAuthenticated() &&
-          (resource.data.providerId == request.auth.uid ||
-           root.data.quotes[quoteId].clientId == request.auth.uid);
+        allow update: if isAuthenticated() && (
+          resource.data.providerId == request.auth.uid ||
+          get(/databases/$(database)/documents/quotes/$(quoteId)).data.clientId == request.auth.uid
+        );
+        allow delete: if isAuthenticated() && (
+          resource.data.providerId == request.auth.uid ||
+          get(/databases/$(database)/documents/quotes/$(quoteId)).data.clientId == request.auth.uid
+        );
       }
     }
 
@@ -55,7 +64,7 @@ service cloud.firestore {
       allow delete: if isAuthenticated();
     }
 
-    // ─── Drafts Collection (if used) ────────────────────────────────────
+    // ─── Drafts Collection ─────────────────────────────────────────────
     match /drafts/{draftId} {
       allow read, write: if isAuthenticated();
     }

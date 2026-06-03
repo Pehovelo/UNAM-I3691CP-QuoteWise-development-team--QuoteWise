@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StatusBar, Alert } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { onAuthChange, wasUserLoggedIn, getCachedUser } from './src/services/authService';
-import { getUserProfile, testFirestoreConnection } from './src/services/firestoreService';
+import { getUserProfile } from './src/services/firestoreService';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -42,16 +42,13 @@ export default function App() {
         // Check if user was previously logged in (cold start with slow Firebase restore)
         const wasLoggedIn = await wasUserLoggedIn();
         if (wasLoggedIn) {
-          // Firebase auth is still initializing — give it a moment
-          // The onAuthStateChanged listener will fire again once the session is restored
-          console.log('[App] User was previously logged in, waiting for Firebase auth restore...');
-          // Don't set user to null yet — keep showing splash while we wait
-          // If after 3 seconds still no user, then truly logged out
+          // Firebase auth is still restoring from AsyncStorage persistence
+          // Keep showing splash — the onAuthStateChanged listener will fire again
+          // If after 3 seconds still no user, then proceed to login screen
           setTimeout(() => {
             setInitializing((prev) => {
               if (prev) {
-                // Still initializing after 3s — Firebase auth restore likely failed
-                console.log('[App] Firebase auth restore timeout. User needs to re-login.');
+                // Firebase auth restore timeout — proceed to login screen
               }
               return false;
             });

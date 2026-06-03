@@ -559,9 +559,9 @@ export async function addDraft(userId, data) {
   }
 }
 
-export async function deleteDraft(id) {
+export async function deleteDraft(userId, id) {
   try {
-    await deleteDoc(doc(db, 'drafts', id));
+    await deleteDoc(userQuotationDoc(userId, id));
   } catch (err) {
     console.error('[firestoreService] deleteDraft FAILED:', err.code, err.message);
     throw err;
