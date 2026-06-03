@@ -142,7 +142,7 @@ export default function HomeScreen({ navigation, user }) {
         </View>
       </FadeSlideIn>
 
-      <ScrollView style={s.tilesScroll} contentContainerStyle={[s.tilesGrid, { paddingBottom: rs(100) + insets.bottom }]} showsVerticalScrollIndicator={false}>
+      <ScrollView style={s.tilesScroll} contentContainerStyle={[s.tilesGrid, { paddingBottom: rs(120) + insets.bottom }]} showsVerticalScrollIndicator={false}>
         {tiles.map((tile, i) => (
           <FadeSlideIn key={tile.label} delay={200 + i * 70} style={s.tileWrapper}>
             <PressableCard onPress={() => navigation.navigate(tile.screen)} style={s.tile}>

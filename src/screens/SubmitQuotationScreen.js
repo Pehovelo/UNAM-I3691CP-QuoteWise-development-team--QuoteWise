@@ -71,7 +71,15 @@ export default function SubmitQuotationScreen({ navigation, route, user }) {
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (err) {
-      Alert.alert('Error', 'Failed to submit quotation. Please try again.');
+      const code = err.code || '';
+      let msg = 'Failed to submit quotation. ';
+      if (code === 'permission-denied') {
+        msg += 'Firestore security rules are blocking writes.';
+      } else if (err.message) {
+        msg += err.message;
+      }
+      console.error('[SubmitQuotationScreen] addResponse error:', code, err.message);
+      Alert.alert('Error', msg);
     } finally {
       setSubmitting(false);
     }

@@ -104,7 +104,15 @@ export default function QuotationFormScreen({ navigation, route }) {
         );
       }
     } catch (err) {
-      Alert.alert('Error', 'Failed to save quotation. Please try again.');
+      const code = err.code || '';
+      let msg = 'Failed to save quotation. ';
+      if (code === 'permission-denied') {
+        msg += 'Firestore security rules are blocking writes.';
+      } else if (err.message) {
+        msg += err.message;
+      }
+      console.error('[QuotationFormScreen] save error:', code, err.message);
+      Alert.alert('Error', msg);
     } finally {
       setSaving(false);
     }

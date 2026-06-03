@@ -1,9 +1,12 @@
 // seed.js — QuoteWise Firestore Database Seeder
 // Run: node seed.js
-// Prerequisites: Firebase Firestore database must be created in Test Mode first
-// (Firebase Console → Build → Firestore Database → Create Database → Test Mode)
+// Prerequisites:
+//   1. Firebase Firestore must be created (Firebase Console → Build → Firestore Database → Create Database)
+//   2. Firestore rules must allow authenticated writes (deploy firestore.rules)
+//   3. You must be logged in: firebase login
 
 import { initializeApp } from "firebase/app";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 // Firebase Configuration — same as src/services/firebaseConfig.js
@@ -17,9 +20,86 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ─── Seed Data: Quotations Collection (new schema) ────────────────
+// ─── Seed Data: Quotes Collection (marketplace) ─────────────────────
+const quotes = [
+  {
+    projectTitle: "Office Renovation in Windhoek CBD",
+    clientId: "seed_client_1",
+    email: "procurement@acmeindustrial.na",
+    firstName: "Johan",
+    lastName: "van Wyk",
+    phone: "+264 61 234 567",
+    budget: 79925,
+    currency: "NAD",
+    description: "Full commercial office renovation including structural assessment, partitioning, electrical rewiring, and flooring installation for a 500sqm office space in Windhoek CBD.",
+    status: "open",
+  },
+  {
+    projectTitle: "Warehouse Shelving & Equipment",
+    clientId: "seed_client_2",
+    email: "orders@apexlogistics.na",
+    firstName: "Maria",
+    lastName: "Shikongo",
+    phone: "+264 61 345 678",
+    budget: 98670,
+    currency: "NAD",
+    description: "Procurement and installation of heavy-duty warehouse shelving units, loading bay equipment, and safety barriers. Delivery and installation included.",
+    status: "open",
+  },
+  {
+    projectTitle: "Structural Steel Framing",
+    clientId: "seed_client_3",
+    email: "",
+    firstName: "Pieter",
+    lastName: "Botha",
+    phone: "+264 61 456 789",
+    budget: 239200,
+    currency: "NAD",
+    description: "Steel frame fabrication, on-site assembly and welding, plus quality inspection and certification for a new industrial building. Must comply with SANS standards.",
+    status: "open",
+  },
+  {
+    projectTitle: "Plumbing Fixtures Supply — Bulk Order",
+    clientId: "seed_client_4",
+    email: "info@desertsands.na",
+    firstName: "Aina",
+    lastName: "Nambinga",
+    phone: "+264 64 567 890",
+    budget: 38985,
+    currency: "NAD",
+    description: "Bulk supply of industrial faucets, sanitary ware sets, and PVC pipe fittings for a residential development project in Swakopmund. Free delivery within Windhoek.",
+    status: "responded",
+  },
+  {
+    projectTitle: "Office Park Electrical Installation",
+    clientId: "seed_client_5",
+    email: "projects@coastalelec.na",
+    firstName: "David",
+    lastName: "Amukongo",
+    phone: "+264 61 678 901",
+    budget: 91655,
+    currency: "NAD",
+    description: "Main distribution board installation, cable routing and trunking, light fixture installation (48 units), and COC certification for an office park in Kleine Kuppe.",
+    status: "responded",
+  },
+  {
+    projectTitle: "Interior & Exterior Painting",
+    clientId: "seed_client_6",
+    email: "",
+    firstName: "Helena",
+    lastName: "Tjiveze",
+    phone: "+264 67 789 012",
+    budget: 47035,
+    currency: "NAD",
+    description: "Surface preparation, priming, interior painting (3 coats), and exterior painting (2 coats) for a guesthouse in Otjiwarongo. Premium Plascon paint included.",
+    status: "closed",
+  },
+];
+
+// ─── Seed Data: Legacy Quotations Collection ─────────────────────────
 const quotations = [
   {
     title: "Commercial Office Renovation",
@@ -76,107 +156,80 @@ const quotations = [
     status: "draft",
     userId: "demo",
   },
-  {
-    title: "Plumbing Fixture Supply",
-    clientName: "Desert Sands Hardware",
-    clientEmail: "info@desertsands.na",
-    currency: "NAD",
-    items: [
-      { description: "Industrial Faucets", quantity: 12, unitPrice: 850, total: 10200 },
-      { description: "Sanitary Ware Set", quantity: 6, unitPrice: 3200, total: 19200 },
-      { description: "PVC Pipe Fittings", quantity: 1, unitPrice: 4500, total: 4500 },
-    ],
-    subtotal: 33900,
-    taxPercent: 15,
-    taxAmount: 5085,
-    total: 38985,
-    notes: "Bulk discount applied. Free delivery within Windhoek.",
-    status: "active",
-    userId: "demo",
-  },
-  {
-    title: "Office Park Wiring Installation",
-    clientName: "Coastal Electrical Services",
-    clientEmail: "projects@coastalelec.na",
-    currency: "NAD",
-    items: [
-      { description: "Main Distribution Board", quantity: 1, unitPrice: 18000, total: 18000 },
-      { description: "Cable Routing & Trunking", quantity: 1, unitPrice: 25000, total: 25000 },
-      { description: "Light Fixture Installation", quantity: 48, unitPrice: 650, total: 31200 },
-      { description: "COC Certification", quantity: 1, unitPrice: 5500, total: 5500 },
-    ],
-    subtotal: 79700,
-    taxPercent: 15,
-    taxAmount: 11955,
-    total: 91655,
-    notes: "Certificate of Compliance included. 6-month workmanship guarantee.",
-    status: "saved",
-    userId: "demo",
-  },
-  {
-    title: "Interior & Exterior Painting",
-    clientName: "Otjiwarongo Paint Centre",
-    clientEmail: "",
-    currency: "NAD",
-    items: [
-      { description: "Surface Preparation & Priming", quantity: 1, unitPrice: 4500, total: 4500 },
-      { description: "Interior Painting (3 coats)", quantity: 8, unitPrice: 2800, total: 22400 },
-      { description: "Exterior Painting (2 coats)", quantity: 4, unitPrice: 3500, total: 14000 },
-    ],
-    subtotal: 40900,
-    taxPercent: 15,
-    taxAmount: 6135,
-    total: 47035,
-    notes: "Premium Plascon paint included. 2-year weatherproof guarantee.",
-    status: "draft",
-    userId: "demo",
-  },
 ];
 
 async function seedDatabase() {
-  console.log("Initializing Firestore injection...\n");
-  console.log("Note: Seeding to global 'quotations' collection for demo purposes.");
-  console.log("User-scoped quotations go to: users/{userId}/quotations/{quoteId}\n");
+  console.log("===========================================");
+  console.log("  QuoteWise Firestore Database Seeder");
+  console.log("===========================================\n");
+
+  // Sign in anonymously to get auth credentials for Firestore rules
+  console.log("Signing in anonymously...");
+  try {
+    await signInAnonymously(auth);
+    console.log("Authenticated successfully.\n");
+  } catch (authErr) {
+    console.error("Anonymous auth failed:", authErr.message);
+    console.log("Note: If anonymous auth is disabled, you'll need to enable it in Firebase Console.");
+    console.log("  Firebase Console → Authentication → Sign-in method → Anonymous → Enable\n");
+    process.exit(1);
+  }
+
   let success = 0;
   let failed = 0;
 
-  try {
-    const quotationsRef = collection(db, "quotations");
-    for (const item of quotations) {
-      try {
-        await addDoc(quotationsRef, {
-          ...item,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-        console.log(`  [OK] Seeded: ${item.clientName} — ${item.title}`);
-        success++;
-      } catch (err) {
-        console.error(`  [FAIL] ${item.clientName}: ${err.message}`);
-        failed++;
-      }
+  // Seed the NEW quotes collection (marketplace)
+  console.log("Seeding 'quotes' collection (marketplace)...\n");
+  for (const item of quotes) {
+    try {
+      await addDoc(collection(db, "quotes"), {
+        ...item,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      console.log(`  [OK] ${item.projectTitle}`);
+      success++;
+    } catch (err) {
+      console.error(`  [FAIL] ${item.projectTitle}: ${err.code || ''} ${err.message}`);
+      failed++;
     }
-
-    console.log(`\n----------------------------------------------`);
-    console.log(`Database seeding complete!`);
-    console.log(`  Success: ${success}`);
-    console.log(`  Failed:  ${failed}`);
-    console.log(`  Total:   ${quotations.length}`);
-    console.log(`----------------------------------------------\n`);
-
-    if (failed === 0) {
-      console.log(`Your app will now display live quotation cards.`);
-      console.log(`All prices are in Namibian Dollars (NAD).`);
-    } else {
-      console.log(`Some entries failed. Make sure Firestore is in Test Mode.`);
-      console.log(`Firebase Console > Build > Firestore Database > Rules`);
-    }
-
-    process.exit(0);
-  } catch (error) {
-    console.error("Fatal seeding error:", error.message);
-    process.exit(1);
   }
+
+  // Seed the LEGACY quotations collection
+  console.log("\nSeeding 'quotations' collection (legacy)...\n");
+  for (const item of quotations) {
+    try {
+      await addDoc(collection(db, "quotations"), {
+        ...item,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      console.log(`  [OK] ${item.clientName} — ${item.title}`);
+      success++;
+    } catch (err) {
+      console.error(`  [FAIL] ${item.clientName}: ${err.code || ''} ${err.message}`);
+      failed++;
+    }
+  }
+
+  console.log(`\n----------------------------------------------`);
+  console.log(`Database seeding complete!`);
+  console.log(`  Success: ${success}`);
+  console.log(`  Failed:  ${failed}`);
+  console.log(`  Total:   ${quotes.length + quotations.length}`);
+  console.log(`----------------------------------------------\n`);
+
+  if (failed > 0) {
+    console.log(`Some entries failed. This usually means:`);
+    console.log(`  1. Firestore is not created yet (Firebase Console → Build → Firestore Database → Create)`);
+    console.log(`  2. Firestore rules deny access (deploy firestore.rules: firebase deploy --only firestore:rules)`);
+    console.log(`  3. Anonymous auth is disabled (Firebase Console → Authentication → Sign-in method → Enable Anonymous)`);
+  } else {
+    console.log(`Your app will now display live quotation cards.`);
+    console.log(`All prices are in Namibian Dollars (NAD).`);
+  }
+
+  process.exit(0);
 }
 
 seedDatabase();

@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { resetPassword } from '../services/authService';
 
 export default function ForgotPasswordScreen({ navigation }) {
@@ -12,6 +13,7 @@ export default function ForgotPasswordScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const insets = useSafeAreaInsets();
 
   const handleReset = async () => {
     if (!email) { setError('Please enter your email address.'); return; }
@@ -39,7 +41,7 @@ export default function ForgotPasswordScreen({ navigation }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.formWrap}>
-        <ScrollView contentContainerStyle={s.form} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[s.form, { paddingBottom: rs(40) + insets.bottom }]} keyboardShouldPersistTaps="handled">
           {sent ? (
             <View style={s.successBox}>
               <Ionicons name="mail-open-outline" size={rs(48)} color={COLORS.brand} />

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { onAuthChange, wasUserLoggedIn, getCachedUser } from './src/services/authService';
-import { getUserProfile } from './src/services/firestoreService';
+import { getUserProfile, testFirestoreConnection } from './src/services/firestoreService';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -28,7 +28,7 @@ export default function App() {
             setUserRole(profile.role);
           }
         } catch (e) {
-          // If Firestore fails, try cached profile
+          // If Firestore fails (e.g. rules not deployed), try cached profile
           try {
             const cached = await getCachedUser();
             if (cached?.role) setUserRole(cached.role);
@@ -39,6 +39,25 @@ export default function App() {
         setUser(firebaseUser);
       } else {
         // User is NOT authenticated
+        // Check if user was previously logged in (cold start with slow Firebase restore)
+        const wasLoggedIn = await wasUserLoggedIn();
+        if (wasLoggedIn) {
+          // Firebase auth is still initializing — give it a moment
+          // The onAuthStateChanged listener will fire again once the session is restored
+          console.log('[App] User was previously logged in, waiting for Firebase auth restore...');
+          // Don't set user to null yet — keep showing splash while we wait
+          // If after 3 seconds still no user, then truly logged out
+          setTimeout(() => {
+            setInitializing((prev) => {
+              if (prev) {
+                // Still initializing after 3s — Firebase auth restore likely failed
+                console.log('[App] Firebase auth restore timeout. User needs to re-login.');
+              }
+              return false;
+            });
+          }, 3000);
+          return; // Don't set user to null yet
+        }
         setUser(null);
         setUserRole('client');
       }

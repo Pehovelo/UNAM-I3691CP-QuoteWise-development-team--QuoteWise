@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { loginUser } from '../services/authService';
 
 export default function LoginScreen({ navigation }) {
@@ -13,6 +14,7 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const handleLogin = async () => {
     if (!email || !password) { setError('Please fill in all fields.'); return; }
@@ -38,7 +40,7 @@ export default function LoginScreen({ navigation }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.formWrap}>
-        <ScrollView contentContainerStyle={s.form} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[s.form, { paddingBottom: rs(40) + insets.bottom }]} keyboardShouldPersistTaps="handled">
           <Text style={s.formTitle}>Welcome Back</Text>
           <Text style={s.formSub}>Sign in to manage your quotations</Text>
 

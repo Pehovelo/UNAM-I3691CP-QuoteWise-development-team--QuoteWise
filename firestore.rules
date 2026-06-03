@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper Functions ───────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ─── Users Collection ───────────────────────────────────────────────
+    // Authenticated users can read any profile; only the owner can write
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
+
+      // Legacy user-scoped quotations subcollection
+      match /quotations/{quoteId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // ─── Quotes Collection (Marketplace) ────────────────────────────────
+    // Any authenticated user can read open quotes; only the client can modify/delete
+    match /quotes/{quoteId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+      allow delete: if isAuthenticated() && resource.data.clientId == request.auth.uid;
+
+      // Responses subcollection — providers can create, client can read/update
+      match /responses/{responseId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated();
+        allow update: if isAuthenticated();
+        allow delete: if isAuthenticated() &&
+          (resource.data.providerId == request.auth.uid ||
+           root.data.quotes[quoteId].clientId == request.auth.uid);
+      }
+    }
+
+    // ─── Legacy Quotations Collection ───────────────────────────────────
+    match /quotations/{quoteId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+
+    // ─── Drafts Collection (if used) ────────────────────────────────────
+    match /drafts/{draftId} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

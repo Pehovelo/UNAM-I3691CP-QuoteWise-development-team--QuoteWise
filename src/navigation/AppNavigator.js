@@ -61,9 +61,12 @@ function MainTabs({ user }) {
           backgroundColor: COLORS.card,
           borderTopColor: COLORS.cardBorder,
           borderTopWidth: 1,
-          height: rs(64) + insets.bottom,
-          paddingBottom: rs(8) + insets.bottom,
-          paddingTop: rs(6),
+          // Ensure tab bar never goes under system navigation bar
+          height: rs(56) + Math.max(insets.bottom, rs(8)),
+          paddingBottom: Math.max(insets.bottom, rs(8)),
+          paddingTop: rs(4),
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
         },
       })}
     >

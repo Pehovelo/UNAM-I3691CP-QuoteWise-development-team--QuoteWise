@@ -59,7 +59,15 @@ export default function ComposePostScreen({ navigation, user }) {
         [{ text: 'OK', onPress: () => navigation.goBack() }]
       );
     } catch (err) {
-      Alert.alert('Error', 'Failed to post request. Please try again.');
+      const code = err.code || '';
+      let msg = 'Failed to post request. ';
+      if (code === 'permission-denied') {
+        msg += 'Firestore security rules are blocking writes. Please deploy firestore.rules to your Firebase project.';
+      } else if (err.message) {
+        msg += err.message;
+      }
+      console.error('[ComposePostScreen] addQuote error:', code, err.message);
+      Alert.alert('Error', msg);
     } finally {
       setSaving(false);
     }

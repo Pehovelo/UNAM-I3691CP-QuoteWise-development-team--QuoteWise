@@ -129,7 +129,7 @@ export default function SettingsScreen({ navigation, user }) {
         </SafeAreaView>
       </View>
 
-      <ScrollView contentContainerStyle={[s.content, { paddingBottom: rs(40) + insets.bottom }]}>
+      <ScrollView contentContainerStyle={[s.content, { paddingBottom: rs(100) + insets.bottom }]}>
         {sections.map((section, si) => (
           <FadeSlideIn key={section.title} delay={si * 100}>
             <Text style={s.sectionTitle}>{section.title}</Text>

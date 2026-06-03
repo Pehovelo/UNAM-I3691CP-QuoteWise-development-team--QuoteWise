@@ -55,7 +55,7 @@ export default function ProfileScreen({ navigation, user }) {
         </SafeAreaView>
       </View>
 
-      <ScrollView contentContainerStyle={[s.content, { paddingBottom: rs(40) + insets.bottom }]}>
+      <ScrollView contentContainerStyle={[s.content, { paddingBottom: rs(100) + insets.bottom }]}>
         {loading ? (
           <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : (

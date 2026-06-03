@@ -92,7 +92,7 @@ export default function QuotationsScreen({ navigation, user }) {
         </View>
       </ImageBackground>
 
-      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={[s.scrollContent, { paddingBottom: rs(100) + insets.bottom }]}>
+      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]}>
         <FadeSlideIn delay={50}>
           <View style={s.statsBar}>
             <Text style={s.statsCount}>{quotations.length} {userRole === 'provider' ? 'requests' : 'quotations'}</Text>
