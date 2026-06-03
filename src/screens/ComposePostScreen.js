@@ -4,7 +4,8 @@ import {
   StatusBar, SafeAreaView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { addQuote } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -18,6 +19,7 @@ export default function ComposePostScreen({ navigation, user }) {
   const [budget, setBudget] = useState('');
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const userId = auth.currentUser?.uid;
 
@@ -80,7 +82,7 @@ export default function ComposePostScreen({ navigation, user }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.flex1}>
-        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={s.scrollContent}>
+        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]}>
           <FadeSlideIn>
             <View style={s.infoBanner}>
               <Ionicons name="information-circle" size={rs(20)} color={COLORS.brand} />
@@ -217,7 +219,6 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl),
-    paddingBottom: rs(120) + BOTTOM_SAFE,
   },
 
   // Info banner

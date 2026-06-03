@@ -28,14 +28,17 @@
         "backgroundColor": "#F05A00",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
-      "package": "com.quotewise.app"
+      "package": "com.quotewise.app",
+      "softwareMenuBar": false,
+      "allowBackup": false
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "owner": "quotewises-organization",
     "plugins": [
-      "expo-sharing"
+      "expo-sharing",
+      "./plugins/withApkName.js"
     ]
   }
 }

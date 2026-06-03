@@ -4,7 +4,8 @@ import {
   StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeMyQuotes, subscribeOpenQuotes, getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -21,6 +22,7 @@ export default function QuotationsScreen({ navigation, user }) {
   const [quotations, setQuotations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('client');
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -70,7 +72,7 @@ export default function QuotationsScreen({ navigation, user }) {
         </View>
       </ImageBackground>
 
-      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={s.scrollContent}>
+      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={[s.scrollContent, { paddingBottom: rs(100) + insets.bottom }]}>
         <FadeSlideIn delay={50}>
           <View style={s.statsBar}>
             <Text style={s.statsCount}>{quotations.length} {userRole === 'provider' ? 'requests' : 'quotations'}</Text>
@@ -155,7 +157,7 @@ const s = StyleSheet.create({
   },
   newBtnText: { fontSize: rs(13), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) + BOTTOM_SAFE },
+  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg) },
   statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: rs(SPACING.lg), paddingHorizontal: rs(SPACING.xs) },
   statsCount: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
   emptyState: { alignItems: 'center', paddingTop: rs(40) },

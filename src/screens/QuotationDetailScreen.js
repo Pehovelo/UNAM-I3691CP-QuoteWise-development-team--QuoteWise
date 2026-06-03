@@ -5,7 +5,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { updateQuotation, deleteQuotation } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -21,6 +22,7 @@ export default function QuotationDetailScreen({ navigation, route }) {
   const userId = auth.currentUser?.uid;
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const insets = useSafeAreaInsets();
 
   if (!quotation) {
     return (
@@ -132,7 +134,7 @@ export default function QuotationDetailScreen({ navigation, route }) {
         </SafeAreaView>
       </View>
 
-      <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={s.scroll} contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]} showsVerticalScrollIndicator={false}>
         {/* Status Badge */}
         <FadeSlideIn>
           <View style={s.titleRow}>
@@ -310,7 +312,7 @@ const s = StyleSheet.create({
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
   shareBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(120) + BOTTOM_SAFE },
+  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl) },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: rs(SPACING.xxxl) },
   errorText: { fontSize: rs(16), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(SPACING.md) },
   backLink: { marginTop: rs(SPACING.lg) },

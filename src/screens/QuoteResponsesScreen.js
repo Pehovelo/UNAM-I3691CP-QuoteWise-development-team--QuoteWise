@@ -6,7 +6,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeQuoteResponses, updateResponse } from '../services/firestoreService';
 
@@ -22,6 +23,7 @@ export default function QuoteResponsesScreen({ navigation, route, user }) {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exportingId, setExportingId] = useState(null);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!quote?.id) return;
@@ -120,7 +122,7 @@ export default function QuoteResponsesScreen({ navigation, route, user }) {
         </SafeAreaView>
       </View>
 
-      <ScrollView style={s.scroll} contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={s.scroll} contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]} showsVerticalScrollIndicator={false}>
         {loading ? (
           <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : responses.length === 0 ? (
@@ -285,7 +287,6 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg),
-    paddingBottom: rs(120) + BOTTOM_SAFE,
   },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: rs(SPACING.xxxl) },
   errorText: { fontSize: rs(16), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(SPACING.md) },

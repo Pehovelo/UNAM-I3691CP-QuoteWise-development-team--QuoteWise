@@ -10,7 +10,10 @@ const scale = Math.min(SCREEN_WIDTH / BASELINE_WIDTH, 1.3); // cap at 1.3 for ta
 export const rs = (size) => Math.round(size * scale);
 
 // Bottom safe area offset for Android gesture navigation
-export const BOTTOM_SAFE = isAndroid ? rs(12) : 0;
+// This is a generous fallback — the real safe area is provided by
+// useSafeAreaInsets() when SafeAreaProvider wraps the app.
+// Kept for screens that don't use the hook directly.
+export const BOTTOM_SAFE = isAndroid ? rs(24) : 0;
 
 export const COLORS = {
   brand: '#F05A00',

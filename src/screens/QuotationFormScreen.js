@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView,
   StatusBar, SafeAreaView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator,
   Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { addQuotation, updateQuotation } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -33,11 +34,7 @@ export default function QuotationFormScreen({ navigation, route }) {
   const [notes, setNotes] = useState(editData?.notes || '');
   const [saving, setSaving] = useState(false);
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
-
-  // AI Assistant state
-  const [showAiModal, setShowAiModal] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const userId = auth.currentUser?.uid;
 
@@ -113,92 +110,6 @@ export default function QuotationFormScreen({ navigation, route }) {
     }
   };
 
-  // AI Assistant - generates suggestions based on keywords
-  const handleAiSuggest = () => {
-    if (!aiPrompt.trim()) { Alert.alert('Empty', 'Please describe the job.'); return; }
-    setAiLoading(true);
-
-    // Smart local suggestion engine
-    setTimeout(() => {
-      const prompt = aiPrompt.toLowerCase();
-      const suggestions = [];
-
-      // Detect project type and suggest items
-      if (prompt.includes('website') || prompt.includes('web')) {
-        suggestions.push(
-          { description: 'UI/UX Design & Wireframes', quantity: 1, unitPrice: 3500 },
-          { description: 'Frontend Development', quantity: 1, unitPrice: 8000 },
-          { description: 'Backend Development', quantity: 1, unitPrice: 6000 },
-          { description: 'Testing & Quality Assurance', quantity: 1, unitPrice: 2000 },
-        );
-        if (!title) setTitle('Website Development Project');
-      } else if (prompt.includes('paint') || prompt.includes('painting')) {
-        suggestions.push(
-          { description: 'Surface Preparation & Priming', quantity: 1, unitPrice: 2500 },
-          { description: 'Interior Painting', quantity: 3, unitPrice: 1800 },
-          { description: 'Exterior Painting', quantity: 2, unitPrice: 2200 },
-        );
-        if (!title) setTitle('Painting Project');
-      } else if (prompt.includes('plumb') || prompt.includes('plumbing')) {
-        suggestions.push(
-          { description: 'Pipe Installation', quantity: 1, unitPrice: 4000 },
-          { description: 'Fixture Fitting', quantity: 4, unitPrice: 850 },
-          { description: 'Leak Repair & Testing', quantity: 1, unitPrice: 1500 },
-        );
-        if (!title) setTitle('Plumbing Services');
-      } else if (prompt.includes('roof') || prompt.includes('roofing')) {
-        suggestions.push(
-          { description: 'Roof Inspection & Assessment', quantity: 1, unitPrice: 1500 },
-          { description: 'Roof Sheet Installation', quantity: 1, unitPrice: 12000 },
-          { description: 'Waterproofing & Sealing', quantity: 1, unitPrice: 3500 },
-        );
-        if (!title) setTitle('Roofing Project');
-      } else if (prompt.includes('electri') || prompt.includes('wiring')) {
-        suggestions.push(
-          { description: 'Electrical Wiring Installation', quantity: 1, unitPrice: 5500 },
-          { description: 'Switch & Outlet Fitting', quantity: 8, unitPrice: 250 },
-          { description: 'Distribution Board Setup', quantity: 1, unitPrice: 3000 },
-        );
-        if (!title) setTitle('Electrical Installation');
-      } else if (prompt.includes('concrete') || prompt.includes('foundation')) {
-        suggestions.push(
-          { description: 'Site Excavation', quantity: 1, unitPrice: 4500 },
-          { description: 'Concrete Supply & Pouring', quantity: 1, unitPrice: 8500 },
-          { description: 'Reinforcement Steel', quantity: 1, unitPrice: 6000 },
-        );
-        if (!title) setTitle('Concrete & Foundation Work');
-      } else if (prompt.includes('landscap') || prompt.includes('garden')) {
-        suggestions.push(
-          { description: 'Site Clearing & Levelling', quantity: 1, unitPrice: 2000 },
-          { description: 'Plant & Turf Installation', quantity: 1, unitPrice: 3500 },
-          { description: 'Irrigation System Setup', quantity: 1, unitPrice: 4000 },
-        );
-        if (!title) setTitle('Landscaping Project');
-      } else {
-        // Generic project suggestions
-        suggestions.push(
-          { description: 'Project Planning & Consultation', quantity: 1, unitPrice: 2000 },
-          { description: 'Core Service Delivery', quantity: 1, unitPrice: 5000 },
-          { description: 'Quality Review & Handover', quantity: 1, unitPrice: 1500 },
-        );
-        if (!title) setTitle('Professional Service');
-      }
-
-      // Add AI-suggested notes
-      let aiNotes = '';
-      if (prompt.includes('seo')) aiNotes += 'SEO optimisation included. ';
-      if (prompt.includes('urg') || prompt.includes('rush')) aiNotes += 'Rush delivery surcharge may apply. ';
-      if (prompt.includes('maint') || prompt.includes('support')) aiNotes += 'Maintenance plan available upon request. ';
-      if (!aiNotes) aiNotes = 'Payment: 50% deposit, 50% on completion. Valid for 30 days.';
-
-      setItems(suggestions.map(s => ({ ...s, total: s.quantity * s.unitPrice })));
-      if (aiNotes) setNotes(aiNotes);
-      setAiLoading(false);
-      setShowAiModal(false);
-      setAiPrompt('');
-    }, 1200);
-  };
-
   return (
     <View style={s.container}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.brandDeep} />
@@ -215,24 +126,8 @@ export default function QuotationFormScreen({ navigation, route }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.flex1}>
-        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={s.scrollContent}>
-          {/* AI Assistant Button */}
-          {!isEditing && (
-            <FadeSlideIn>
-              <TouchableOpacity style={s.aiBanner} onPress={() => setShowAiModal(true)} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel="AI Quote Assistant">
-                <View style={s.aiBannerLeft}>
-                  <Text style={s.aiIcon}>✨</Text>
-                  <View>
-                    <Text style={s.aiBannerTitle}>AI Quote Assistant</Text>
-                    <Text style={s.aiBannerSub}>Describe the job, get instant line items</Text>
-                  </View>
-                </View>
-                <Ionicons name="chevron-forward" size={rs(18)} color={COLORS.brand} />
-              </TouchableOpacity>
-            </FadeSlideIn>
-          )}
-
-          {/* Title with AI sparkle for editing */}
+        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]}>
+          {/* Title */}
           <FadeSlideIn delay={50}>
             <View style={s.inputGroup}>
               <Text style={s.label}>Quotation Title *</Text>
@@ -386,36 +281,6 @@ export default function QuotationFormScreen({ navigation, route }) {
           </View>
         </TouchableOpacity>
       </Modal>
-
-      {/* AI Assistant Modal */}
-      <Modal visible={showAiModal} transparent animationType="fade" onRequestClose={() => setShowAiModal(false)}>
-        <TouchableOpacity style={s.modalOverlay} activeOpacity={1} onPress={() => setShowAiModal(false)}>
-          <View style={s.aiModal} onStartShouldSetResponder={() => true}>
-            <View style={s.aiModalHeader}>
-              <Text style={s.aiModalTitle}>✨ AI Quote Assistant</Text>
-              <TouchableOpacity onPress={() => setShowAiModal(false)} accessibilityRole="button">
-                <Ionicons name="close" size={rs(22)} color={COLORS.inkMid} />
-              </TouchableOpacity>
-            </View>
-            <Text style={s.aiModalSub}>Describe the job in plain English and the AI will suggest line items with Namibian Dollar pricing.</Text>
-            <TextInput
-              style={s.aiInput}
-              value={aiPrompt}
-              onChangeText={setAiPrompt}
-              placeholder="e.g. Build a 5-page website for a restaurant, includes SEO"
-              placeholderTextColor={COLORS.inkFaint}
-              multiline
-              numberOfLines={3}
-              textAlignVertical="top"
-            />
-            <TouchableOpacity style={[s.aiSuggestBtn, aiLoading && s.btnDisabled]} onPress={handleAiSuggest} disabled={aiLoading} activeOpacity={0.8} accessibilityRole="button">
-              {aiLoading ? <ActivityIndicator color="#FFFFFF" size="small" /> : (
-                <><Text style={s.aiSuggestBtnText}>Generate Suggestions</Text><Ionicons name="sparkles" size={rs(18)} color="#FFFFFF" /></>
-              )}
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
     </View>
   );
 }
@@ -428,18 +293,7 @@ const s = StyleSheet.create({
   backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(120) + BOTTOM_SAFE },
-
-  // AI Banner
-  aiBanner: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: COLORS.brandGlow, borderRadius: RADII.xxl, padding: rs(SPACING.lg),
-    marginBottom: rs(SPACING.lg), borderWidth: rs(1), borderColor: COLORS.brand,
-  },
-  aiBannerLeft: { flexDirection: 'row', alignItems: 'center', gap: rs(SPACING.md), flex: 1 },
-  aiIcon: { fontSize: rs(22) },
-  aiBannerTitle: { fontSize: rs(14), fontWeight: '700', color: COLORS.brand, fontFamily: FONTS.body },
-  aiBannerSub: { fontSize: rs(11), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(2) },
+  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl) },
 
   // Inputs
   inputGroup: { marginBottom: rs(SPACING.lg) },
@@ -533,25 +387,4 @@ const s = StyleSheet.create({
   pickerOptionActive: { backgroundColor: COLORS.brandGlow },
   pickerOptionText: { fontSize: rs(15), color: COLORS.ink, fontFamily: FONTS.body },
   pickerOptionTextActive: { color: COLORS.brand, fontWeight: '600' },
-
-  // AI Modal
-  aiModal: {
-    backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),
-    width: '100%',
-  },
-  aiModalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: rs(SPACING.md) },
-  aiModalTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display },
-  aiModalSub: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, lineHeight: rs(19), marginBottom: rs(SPACING.lg) },
-  aiInput: {
-    backgroundColor: COLORS.surface, borderRadius: RADII.md, borderWidth: rs(1),
-    borderColor: COLORS.cardBorder, paddingHorizontal: rs(SPACING.md), paddingVertical: rs(SPACING.md),
-    fontSize: rs(14), color: COLORS.ink, fontFamily: FONTS.body, minHeight: rs(80),
-    textAlignVertical: 'top', marginBottom: rs(SPACING.lg),
-  },
-  aiSuggestBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: rs(6),
-    backgroundColor: COLORS.brand, borderRadius: RADII.xxl, paddingVertical: rs(16),
-    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(4) }, shadowOpacity: 0.35, shadowRadius: rs(12), elevation: 6,
-  },
-  aiSuggestBtnText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });

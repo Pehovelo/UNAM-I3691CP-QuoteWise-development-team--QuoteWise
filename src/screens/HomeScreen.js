@@ -4,7 +4,8 @@ import {
   StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, BOTTOM_SAFE, width } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, width } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeQuotationCounts, subscribeQuoteCounts, getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -15,6 +16,7 @@ export default function HomeScreen({ navigation, user }) {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState('client');
   const [companyName, setCompanyName] = useState('');
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -141,7 +143,7 @@ export default function HomeScreen({ navigation, user }) {
         </View>
       </FadeSlideIn>
 
-      <ScrollView style={s.tilesScroll} contentContainerStyle={s.tilesGrid} showsVerticalScrollIndicator={false}>
+      <ScrollView style={s.tilesScroll} contentContainerStyle={[s.tilesGrid, { paddingBottom: rs(100) + insets.bottom }]} showsVerticalScrollIndicator={false}>
         {tiles.map((tile, i) => (
           <FadeSlideIn key={tile.label} delay={200 + i * 70} style={s.tileWrapper}>
             <PressableCard onPress={() => navigation.navigate(tile.screen)} style={s.tile}>
@@ -199,7 +201,7 @@ const s = StyleSheet.create({
   sectionTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, letterSpacing: rs(-0.3) },
   sectionSub: { fontSize: rs(12), color: COLORS.brand, fontFamily: FONTS.body, marginTop: rs(2), fontWeight: '600' },
   tilesScroll: { flex: 1 },
-  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: rs(SPACING.lg), gap: rs(SPACING.md), paddingBottom: rs(100) + BOTTOM_SAFE },
+  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: rs(SPACING.lg), gap: rs(SPACING.md) },
   tileWrapper: { width: (width - rs(44)) / 2 },
   tile: {
     backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),

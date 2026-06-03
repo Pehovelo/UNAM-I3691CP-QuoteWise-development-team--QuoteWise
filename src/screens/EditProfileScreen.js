@@ -3,7 +3,8 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { getUserProfile, updateUserProfile } from '../services/firestoreService';
 import { updateUserDisplayName, auth } from '../services/authService';
@@ -15,6 +16,7 @@ export default function EditProfileScreen({ navigation }) {
   const [phone, setPhone] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -81,7 +83,7 @@ export default function EditProfileScreen({ navigation }) {
         </SafeAreaView>
       </View>
 
-      <ScrollView contentContainerStyle={s.content}>
+      <ScrollView contentContainerStyle={[s.content, { paddingBottom: rs(60) + insets.bottom }]}>
         {loading ? (
           <ActivityIndicator size="large" color={COLORS.brand} style={{ marginTop: rs(40) }} />
         ) : (
@@ -156,7 +158,7 @@ const s = StyleSheet.create({
   headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
   backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(60) + BOTTOM_SAFE },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl) },
 
   // Avatar
   avatarSection: { alignItems: 'center', marginBottom: rs(SPACING.xxxl) },

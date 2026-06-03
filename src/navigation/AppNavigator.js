@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
@@ -29,6 +30,7 @@ const Tab = createBottomTabNavigator();
 // Bottom tab navigator for the main app
 function MainTabs({ user }) {
   const userRole = user?.role || 'client';
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -59,8 +61,8 @@ function MainTabs({ user }) {
           backgroundColor: COLORS.card,
           borderTopColor: COLORS.cardBorder,
           borderTopWidth: 1,
-          height: rs(64) + BOTTOM_SAFE,
-          paddingBottom: rs(8) + BOTTOM_SAFE,
+          height: rs(64) + insets.bottom,
+          paddingBottom: rs(8) + insets.bottom,
           paddingTop: rs(6),
         },
       })}

@@ -4,7 +4,8 @@ import {
   StatusBar, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { registerUser } from '../services/authService';
 
 const ROLES = [
@@ -22,6 +23,7 @@ export default function RegisterScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const handleRegister = async () => {
     if (!displayName || !email || !password || !confirmPassword) { setError('Please fill in all fields.'); return; }
@@ -52,7 +54,7 @@ export default function RegisterScreen({ navigation }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.formWrap}>
-        <ScrollView contentContainerStyle={s.form} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[s.form, { paddingBottom: 40 + insets.bottom }]} keyboardShouldPersistTaps="handled">
           {error ? <View style={s.errorBox}><Ionicons name="alert-circle" size={rs(16)} color={COLORS.error} /><Text style={s.errorText}>{error}</Text></View> : null}
 
           {/* Role Selection */}
@@ -140,7 +142,7 @@ const s = StyleSheet.create({
   headerTitle: { fontSize: rs(26), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display },
   headerSub: { fontSize: rs(14), color: 'rgba(255,255,255,0.75)', fontFamily: FONTS.body, marginTop: 4 },
   formWrap: { flex: 1 },
-  form: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: 40 + BOTTOM_SAFE },
+  form: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl },
 
   // Role selection
   roleRow: { flexDirection: 'row', gap: rs(SPACING.md), marginBottom: rs(SPACING.xl) },

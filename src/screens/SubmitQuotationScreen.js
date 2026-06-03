@@ -4,7 +4,8 @@ import {
   StatusBar, SafeAreaView, KeyboardAvoidingView, Platform, Alert, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { getQuote, addResponse, getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -17,6 +18,7 @@ export default function SubmitQuotationScreen({ navigation, route, user }) {
   const [price, setPrice] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const loadData = async () => {
@@ -113,7 +115,7 @@ export default function SubmitQuotationScreen({ navigation, route, user }) {
       </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={s.flex1}>
-        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={s.scrollContent}>
+        <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled" contentContainerStyle={[s.scrollContent, { paddingBottom: rs(120) + insets.bottom }]}>
           {/* Project summary */}
           {quote && (
             <FadeSlideIn>
@@ -231,7 +233,6 @@ const s = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: {
     paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl),
-    paddingBottom: rs(120) + BOTTOM_SAFE,
   },
 
   // Project card

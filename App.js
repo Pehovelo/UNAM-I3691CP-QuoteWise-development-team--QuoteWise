@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { onAuthChange, wasUserLoggedIn } from './src/services/authService';
 import { getUserProfile } from './src/services/firestoreService';
@@ -38,26 +39,26 @@ export default function App() {
   // While initializing, show splash screen
   if (initializing && showSplash) {
     return (
-      <>
+      <SafeAreaProvider>
         <StatusBar barStyle="light-content" />
         <AppNavigator
           user={null}
           showSplash={true}
           onSplashComplete={handleSplashComplete}
         />
-      </>
+      </SafeAreaProvider>
     );
   }
 
   // After splash, show auth or main app
   return (
-    <>
+    <SafeAreaProvider>
       <StatusBar barStyle={user ? "dark-content" : "light-content"} />
       <AppNavigator
         user={enrichedUser}
         showSplash={false}
         onSplashComplete={handleSplashComplete}
       />
-    </>
+    </SafeAreaProvider>
   );
 }
