@@ -15,6 +15,36 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { db } from './firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// ─── Cache Keys ────────────────────────────────────────────────────────────
+const CACHE_PREFIX = 'qw_cache_';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache TTL
+
+// Simple cache helper: get cached data if fresh, else null
+async function getCached(key) {
+  try {
+    const raw = await AsyncStorage.getItem(CACHE_PREFIX + key);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) {
+      await AsyncStorage.removeItem(CACHE_PREFIX + key);
+      return null;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+// Save data to cache with timestamp
+async function setCache(key, data) {
+  try {
+    await AsyncStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ data, ts: Date.now() }));
+  } catch {
+    // Ignore cache write errors
+  }
+}
 
 // ─── User-scoped Quotation Paths (legacy - kept for QuotationFormScreen) ───
 const userQuotationsRef = (userId) => collection(db, 'users', userId, 'quotations');
@@ -38,6 +68,9 @@ export async function addQuote(data) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  // Invalidate relevant caches
+  await AsyncStorage.removeItem(CACHE_PREFIX + 'myQuotes_' + data.clientId);
+  await AsyncStorage.removeItem(CACHE_PREFIX + 'openQuotes');
   return docRef.id;
 }
 
@@ -59,11 +92,17 @@ export async function deleteQuote(quoteId) {
   await batch.commit();
 }
 
-// Get a single quote
+// Get a single quote (with cache)
 export async function getQuote(quoteId) {
+  // Try cache first
+  const cached = await getCached('quote_' + quoteId);
+  if (cached) return cached;
+
   const docSnap = await getDoc(quoteDoc(quoteId));
   if (docSnap.exists()) {
-    return { id: docSnap.id, ...docSnap.data() };
+    const data = { id: docSnap.id, ...docSnap.data() };
+    await setCache('quote_' + quoteId, data);
+    return data;
   }
   return null;
 }
@@ -77,7 +116,14 @@ export function subscribeMyQuotes(userId, callback) {
   );
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    // Cache the results
+    setCache('myQuotes_' + userId, items);
     callback(items);
+  }, (error) => {
+    // On error, try to serve cached data
+    getCached('myQuotes_' + userId).then((cached) => {
+      if (cached) callback(cached);
+    });
   });
 }
 
@@ -92,6 +138,8 @@ export function subscribeMyQuotesByStatus(userId, status, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -104,15 +152,18 @@ export function subscribeOpenQuotes(callback) {
   );
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setCache('openQuotes', items);
     callback(items);
+  }, (error) => {
+    // On error, try to serve cached data
+    getCached('openQuotes').then((cached) => {
+      if (cached) callback(cached);
+    });
   });
 }
 
 // Subscribe to quotes a provider has responded to
 export function subscribeProviderQuotes(providerId, callback) {
-  // We need to find quotes where this provider has submitted a response
-  // Since Firestore doesn't support queries across subcollections easily,
-  // we store providerId in the response and query from there
   const q = query(
     quotesRef(),
     orderBy('updatedAt', 'desc')
@@ -131,7 +182,12 @@ export function subscribeProviderQuotes(providerId, callback) {
         items.push(quoteData);
       }
     }
+    setCache('providerQuotes_' + providerId, items);
     callback(items);
+  }, (error) => {
+    getCached('providerQuotes_' + providerId).then((cached) => {
+      if (cached) callback(cached);
+    });
   });
 }
 
@@ -147,6 +203,8 @@ export async function addResponse(quoteId, data) {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  // Invalidate quote cache since it may change status
+  await AsyncStorage.removeItem(CACHE_PREFIX + 'quote_' + quoteId);
   return docRef.id;
 }
 
@@ -163,7 +221,12 @@ export function subscribeQuoteResponses(quoteId, callback) {
   const q = query(quoteResponsesRef(quoteId), orderBy('createdAt', 'desc'));
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setCache('responses_' + quoteId, items);
     callback(items);
+  }, (error) => {
+    getCached('responses_' + quoteId).then((cached) => {
+      if (cached) callback(cached);
+    });
   });
 }
 
@@ -183,6 +246,8 @@ export function subscribeUserQuotations(userId, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -196,6 +261,8 @@ export function subscribeUserQuotationsByStatus(userId, status, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -209,6 +276,8 @@ export function subscribeActiveQuotations(userId, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -258,6 +327,8 @@ export function subscribeQuotationCounts(userId, callback) {
       else if (status === 'saved') saved++;
     });
     callback({ active, draft, saved, total: active + draft + saved });
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -274,6 +345,8 @@ export function subscribeQuoteCounts(userId, callback) {
       else if (status === 'closed') closed++;
     });
     callback({ open, responded, closed, total: open + responded + closed });
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -295,20 +368,35 @@ export async function deleteAllUserData(userId) {
 
   batch.delete(doc(db, 'users', userId));
   await batch.commit();
+
+  // Clear all caches for this user
+  const keys = await AsyncStorage.getAllKeys();
+  const userKeys = keys.filter(k => k.startsWith(CACHE_PREFIX));
+  if (userKeys.length > 0) {
+    await AsyncStorage.multiRemove(userKeys);
+  }
 }
 
-// ─── User Profile ────────────────────────────────────────────────────────
+// ─── User Profile (with cache) ────────────────────────────────────────────
 
 export async function getUserProfile(uid) {
+  // Try cache first
+  const cached = await getCached('profile_' + uid);
+  if (cached) return cached;
+
   const docSnap = await getDoc(doc(db, 'users', uid));
   if (docSnap.exists()) {
-    return { uid, ...docSnap.data() };
+    const data = { uid, ...docSnap.data() };
+    await setCache('profile_' + uid, data);
+    return data;
   }
   return null;
 }
 
 export async function updateUserProfile(uid, data) {
   await setDoc(doc(db, 'users', uid), data, { merge: true });
+  // Update cache
+  await setCache('profile_' + uid, { uid, ...data });
 }
 
 // ─── Legacy compatibility (global quotations collection) ─────────────────
@@ -318,6 +406,8 @@ export function subscribeQuotations(callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -330,6 +420,8 @@ export function subscribeQuotationsByStatus(status, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -342,6 +434,8 @@ export function subscribeSavedQuotations(userId, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 
@@ -354,6 +448,8 @@ export function subscribeDrafts(userId, callback) {
   return onSnapshot(q, (snapshot) => {
     const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     callback(items);
+  }, (error) => {
+    // Fallback silently
   });
 }
 

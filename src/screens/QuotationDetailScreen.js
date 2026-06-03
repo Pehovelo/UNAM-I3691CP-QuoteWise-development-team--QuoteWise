@@ -9,7 +9,7 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { updateQuotation, deleteQuotation } from '../services/firestoreService';
-import { auth } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 
 const STATUS_CONFIG = {
   draft: { color: COLORS.inkLight, bg: 'rgba(139,101,20,0.10)', label: 'Draft', icon: 'create' },

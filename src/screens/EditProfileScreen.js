@@ -7,7 +7,8 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { getUserProfile, updateUserProfile } from '../services/firestoreService';
-import { updateUserDisplayName, auth } from '../services/authService';
+import { updateUserDisplayName } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 
 export default function EditProfileScreen({ navigation }) {
   const [displayName, setDisplayName] = useState('');

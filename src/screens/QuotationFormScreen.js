@@ -9,7 +9,7 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { addQuotation, updateQuotation } from '../services/firestoreService';
-import { auth } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 
 const CURRENCIES = [
   { code: 'NAD', symbol: 'N$', label: 'Namibian Dollar' },

@@ -24,6 +24,7 @@
       "bundleIdentifier": "com.quotewise.app"
     },
     "android": {
+      "name": "QuoteWise",
       "adaptiveIcon": {
         "backgroundColor": "#F05A00",
         "foregroundImage": "./assets/android-icon-foreground.png"

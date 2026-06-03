@@ -8,7 +8,6 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { addQuote } from '../services/firestoreService';
-import { auth } from '../services/authService';
 
 export default function ComposePostScreen({ navigation, user }) {
   const [email, setEmail] = useState(user?.email || '');
@@ -21,7 +20,7 @@ export default function ComposePostScreen({ navigation, user }) {
   const [saving, setSaving] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const userId = auth.currentUser?.uid;
+  const userId = user?.uid;
 
   const validate = () => {
     if (!projectTitle.trim()) {

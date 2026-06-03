@@ -8,7 +8,6 @@ import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTo
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeUserQuotationsByStatus, deleteQuotation } from '../services/firestoreService';
-import { auth } from '../services/authService';
 
 export default function DraftsScreen({ navigation, user }) {
   const [drafts, setDrafts] = useState([]);

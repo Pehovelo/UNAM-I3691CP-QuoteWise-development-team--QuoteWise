@@ -7,7 +7,7 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { getUserProfile } from '../services/firestoreService';
-import { auth } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 
 export default function ProfileScreen({ navigation, user }) {
   const [profile, setProfile] = useState(null);

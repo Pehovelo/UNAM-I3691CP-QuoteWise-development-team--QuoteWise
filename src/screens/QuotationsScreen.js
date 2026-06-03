@@ -8,7 +8,6 @@ import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTo
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeMyQuotes, subscribeOpenQuotes, getUserProfile } from '../services/firestoreService';
-import { auth } from '../services/authService';
 
 const STATUS_CONFIG = {
   open: { color: COLORS.brand, bg: COLORS.pendingBg, label: 'Open', icon: 'radio-button-on' },
@@ -26,27 +25,48 @@ export default function QuotationsScreen({ navigation, user }) {
 
   useEffect(() => {
     if (!user?.uid) return;
-    // Load user role
-    getUserProfile(user.uid).then((profile) => {
-      if (profile) setUserRole(profile.role || 'client');
-    });
 
     let unsub;
-    if (userRole === 'provider') {
-      // Provider sees open requests
-      unsub = subscribeOpenQuotes((items) => {
-        setQuotations(items);
-        setLoading(false);
-      });
-    } else {
-      // Client sees own quote requests
-      unsub = subscribeMyQuotes(user.uid, (items) => {
-        setQuotations(items);
-        setLoading(false);
-      });
-    }
-    return unsub;
-  }, [user?.uid, userRole]);
+    let cancelled = false;
+
+    const setup = async () => {
+      // Load user role first, then subscribe with correct role
+      let role = user?.role || 'client';
+      try {
+        const profile = await getUserProfile(user.uid);
+        if (profile?.role) role = profile.role;
+      } catch (e) {
+        // Use default/cached role
+      }
+
+      if (cancelled) return;
+      setUserRole(role);
+
+      // Now subscribe with the correct role
+      if (role === 'provider') {
+        unsub = subscribeOpenQuotes((items) => {
+          if (!cancelled) {
+            setQuotations(items);
+            setLoading(false);
+          }
+        });
+      } else {
+        unsub = subscribeMyQuotes(user.uid, (items) => {
+          if (!cancelled) {
+            setQuotations(items);
+            setLoading(false);
+          }
+        });
+      }
+    };
+
+    setup();
+
+    return () => {
+      cancelled = true;
+      if (unsub) unsub();
+    };
+  }, [user?.uid]);
 
   return (
     <View style={s.container}>

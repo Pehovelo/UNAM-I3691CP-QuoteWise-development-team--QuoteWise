@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Configuration — QuoteWise Project
 // These values are safe to include in the client bundle (Firebase security is enforced via Firestore rules, not API key secrecy)
@@ -14,6 +15,19 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+
+// Use React Native AsyncStorage for auth persistence so users stay logged in
+// across app restarts. This is the critical fix for persistent login.
+let auth;
+try {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} catch (e) {
+  // If already initialized (hot reload), fall back to getAuth
+  auth = getAuth(app);
+}
+
 export const db = getFirestore(app);
 export default app;
+export { auth };

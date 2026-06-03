@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
-import { logoutUser, deleteUserAccount, auth } from '../services/authService';
+import { logoutUser, deleteUserAccount } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 import { deleteAllUserData } from '../services/firestoreService';
 
 const TERMS_TEXT = `QuoteWise Terms of Service

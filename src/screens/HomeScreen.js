@@ -8,7 +8,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, width } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeQuotationCounts, subscribeQuoteCounts, getUserProfile } from '../services/firestoreService';
-import { auth } from '../services/authService';
 
 export default function HomeScreen({ navigation, user }) {
   const [counts, setCounts] = useState({ active: 0, draft: 0, saved: 0, total: 0 });

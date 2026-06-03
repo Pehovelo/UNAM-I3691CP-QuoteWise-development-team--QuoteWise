@@ -8,7 +8,7 @@ import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn } from '../components/Animations';
 import { getQuote, addResponse, getUserProfile } from '../services/firestoreService';
-import { auth } from '../services/authService';
+import { auth } from '../services/firebaseConfig';
 
 export default function SubmitQuotationScreen({ navigation, route, user }) {
   const quoteId = route?.params?.quoteId;
