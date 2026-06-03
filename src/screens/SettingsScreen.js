@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Alert, Modal, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { logoutUser, deleteUserAccount, auth } from '../services/authService';
 import { deleteAllUserData } from '../services/firestoreService';
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
   headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
   backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(40) },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(40) + BOTTOM_SAFE },
   sectionTitle: { fontSize: rs(13), fontWeight: '600', color: COLORS.inkLight, fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: rs(1), marginBottom: rs(SPACING.sm), marginTop: rs(SPACING.lg) },
   sectionCard: {
     backgroundColor: COLORS.card, borderRadius: RADII.xxl, borderWidth: rs(1),

@@ -4,12 +4,15 @@ import {
   StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
-import { subscribeActiveQuotations } from '../services/firestoreService';
+import { subscribeMyQuotes, subscribeOpenQuotes, getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
 
 const STATUS_CONFIG = {
+  open: { color: COLORS.brand, bg: COLORS.pendingBg, label: 'Open', icon: 'radio-button-on' },
+  responded: { color: COLORS.saved, bg: COLORS.savedBg, label: 'Responded', icon: 'chatbubbles' },
+  closed: { color: COLORS.inkLight, bg: COLORS.draftBg, label: 'Closed', icon: 'lock-closed' },
   draft: { color: COLORS.inkLight, bg: COLORS.draftBg, label: 'Draft', icon: 'create' },
   active: { color: COLORS.brand, bg: COLORS.pendingBg, label: 'Active', icon: 'send' },
 };
@@ -17,20 +20,31 @@ const STATUS_CONFIG = {
 export default function QuotationsScreen({ navigation, user }) {
   const [quotations, setQuotations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState('client');
 
   useEffect(() => {
     if (!user?.uid) return;
-    const unsub = subscribeActiveQuotations(user.uid, (items) => {
-      setQuotations(items);
-      setLoading(false);
+    // Load user role
+    getUserProfile(user.uid).then((profile) => {
+      if (profile) setUserRole(profile.role || 'client');
     });
-    return unsub;
-  }, [user?.uid]);
 
-  const getCurrencySymbol = (code) => {
-    const map = { NAD: 'N$', USD: '$', ZAR: 'R', BWP: 'P', ZMW: 'ZK' };
-    return map[code] || 'N$';
-  };
+    let unsub;
+    if (userRole === 'provider') {
+      // Provider sees open requests
+      unsub = subscribeOpenQuotes((items) => {
+        setQuotations(items);
+        setLoading(false);
+      });
+    } else {
+      // Client sees own quote requests
+      unsub = subscribeMyQuotes(user.uid, (items) => {
+        setQuotations(items);
+        setLoading(false);
+      });
+    }
+    return unsub;
+  }, [user?.uid, userRole]);
 
   return (
     <View style={s.container}>
@@ -41,13 +55,15 @@ export default function QuotationsScreen({ navigation, user }) {
             <FadeSlideIn>
               <View style={s.heroRow}>
                 <View style={s.heroTextWrap}>
-                  <Text style={s.heroTitle}>Quotations</Text>
-                  <Text style={s.heroSub}>Active & draft estimates</Text>
+                  <Text style={s.heroTitle}>{userRole === 'provider' ? 'Open Requests' : 'My Requests'}</Text>
+                  <Text style={s.heroSub}>{userRole === 'provider' ? 'Available projects' : 'Your posted projects'}</Text>
                 </View>
-                <TouchableOpacity style={s.newBtn} onPress={() => navigation.navigate('QuotationForm')} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="New quotation">
-                  <Ionicons name="add" size={rs(18)} color="#FFFFFF" />
-                  <Text style={s.newBtnText}>New</Text>
-                </TouchableOpacity>
+                {userRole === 'client' && (
+                  <TouchableOpacity style={s.newBtn} onPress={() => navigation.navigate('Compose')} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="New request">
+                    <Ionicons name="add" size={rs(18)} color="#FFFFFF" />
+                    <Text style={s.newBtnText}>New</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </FadeSlideIn>
           </SafeAreaView>
@@ -57,7 +73,7 @@ export default function QuotationsScreen({ navigation, user }) {
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={s.scrollContent}>
         <FadeSlideIn delay={50}>
           <View style={s.statsBar}>
-            <Text style={s.statsCount}>{quotations.length} quotations</Text>
+            <Text style={s.statsCount}>{quotations.length} {userRole === 'provider' ? 'requests' : 'quotations'}</Text>
           </View>
         </FadeSlideIn>
 
@@ -67,18 +83,27 @@ export default function QuotationsScreen({ navigation, user }) {
           <FadeSlideIn delay={150}>
             <View style={s.emptyState}>
               <Ionicons name="document-text-outline" size={rs(48)} color={COLORS.inkFaint} />
-              <Text style={s.emptyTitle}>No quotations yet</Text>
-              <Text style={s.emptyMsg}>Tap the + New button to create your first quotation.</Text>
+              <Text style={s.emptyTitle}>{userRole === 'provider' ? 'No open requests' : 'No requests yet'}</Text>
+              <Text style={s.emptyMsg}>
+                {userRole === 'provider'
+                  ? 'Check back later for new project requests from clients.'
+                  : 'Tap the + New button to create your first quotation request.'}
+              </Text>
             </View>
           </FadeSlideIn>
         ) : (
           quotations.map((item, i) => {
-            const statusConf = STATUS_CONFIG[item.status] || STATUS_CONFIG.draft;
-            const sym = getCurrencySymbol(item.currency);
+            const statusConf = STATUS_CONFIG[item.status] || STATUS_CONFIG.open;
             return (
               <FadeSlideIn key={item.id} delay={i * 80}>
                 <PressableCard
-                  onPress={() => navigation.navigate('QuotationDetail', { quotation: item })}
+                  onPress={() => {
+                    if (userRole === 'provider') {
+                      navigation.navigate('SubmitQuotation', { quoteId: item.id });
+                    } else {
+                      navigation.navigate('QuoteResponses', { quote: item });
+                    }
+                  }}
                   style={s.rowCard}
                 >
                   <View style={s.rowLeft}>
@@ -86,10 +111,13 @@ export default function QuotationsScreen({ navigation, user }) {
                       <Ionicons name={statusConf.icon} size={rs(20)} color={statusConf.color} />
                     </View>
                     <View style={s.rowTextWrap}>
-                      <Text style={s.rowTitle} numberOfLines={1}>{item.title || item.clientName}</Text>
-                      <Text style={s.rowSub} numberOfLines={1}>{item.clientName}</Text>
+                      <Text style={s.rowTitle} numberOfLines={1}>{item.projectTitle || item.title}</Text>
+                      <Text style={s.rowSub} numberOfLines={1}>{item.description?.substring(0, 60) || item.clientName || ''}</Text>
                       <View style={s.rowMeta}>
-                        {item.total ? <Text style={s.rowAmount}>{sym} {item.total.toFixed(2)}</Text> : null}
+                        {item.budget ? <Text style={s.rowAmount}>N$ {Number(item.budget).toFixed(2)}</Text> : null}
+                        {item.firstName || item.lastName ? (
+                          <Text style={s.rowClient}> by {item.firstName} {item.lastName}</Text>
+                        ) : null}
                       </View>
                     </View>
                   </View>
@@ -106,20 +134,6 @@ export default function QuotationsScreen({ navigation, user }) {
           })
         )}
       </ScrollView>
-
-      {/* FAB */}
-      <FadeSlideIn delay={400}>
-        <TouchableOpacity
-          style={s.fab}
-          activeOpacity={0.85}
-          onPress={() => navigation.navigate('QuotationForm')}
-          accessibilityRole="button"
-          accessibilityLabel="Create new quotation"
-        >
-          <Ionicons name="add" size={rs(22)} color="#FFFFFF" />
-          <Text style={s.fabText}>New Quote</Text>
-        </TouchableOpacity>
-      </FadeSlideIn>
     </View>
   );
 }
@@ -141,7 +155,7 @@ const s = StyleSheet.create({
   },
   newBtnText: { fontSize: rs(13), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) },
+  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) + BOTTOM_SAFE },
   statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: rs(SPACING.lg), paddingHorizontal: rs(SPACING.xs) },
   statsCount: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
   emptyState: { alignItems: 'center', paddingTop: rs(40) },
@@ -159,20 +173,12 @@ const s = StyleSheet.create({
   rowIconWrap: { width: rs(44), height: rs(44), borderRadius: RADII.md, alignItems: 'center', justifyContent: 'center', marginRight: rs(SPACING.md), borderWidth: rs(1), borderColor: 'rgba(240,90,0,0.06)' },
   rowTextWrap: { flex: 1 },
   rowTitle: { fontSize: rs(15), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, marginBottom: rs(2) },
-  rowSub: { fontSize: rs(13), color: COLORS.inkMid, fontFamily: FONTS.body, marginBottom: rs(SPACING.xs) },
-  rowMeta: { flexDirection: 'row', alignItems: 'center' },
+  rowSub: { fontSize: rs(12), color: COLORS.inkMid, fontFamily: FONTS.body, marginBottom: rs(SPACING.xs) },
+  rowMeta: { flexDirection: 'row', alignItems: 'center', gap: rs(4) },
   rowAmount: { fontSize: rs(12), fontWeight: '600', color: COLORS.brand, fontFamily: FONTS.mono },
+  rowClient: { fontSize: rs(11), color: COLORS.inkLight, fontFamily: FONTS.body },
   rowRight: { flexDirection: 'row', alignItems: 'center', gap: rs(SPACING.sm) },
   badge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: rs(10), paddingVertical: rs(5), borderRadius: RADII.pill, gap: rs(5) },
   badgeDot: { width: rs(6), height: rs(6), borderRadius: rs(3) },
   badgeText: { fontSize: rs(11), fontWeight: '600', fontFamily: FONTS.body, letterSpacing: rs(0.3) },
-  fab: {
-    position: 'absolute', bottom: rs(28), right: rs(SPACING.xl),
-    flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.brand,
-    borderRadius: RADII.xxl, paddingLeft: rs(18), paddingRight: rs(SPACING.xxl),
-    paddingVertical: rs(SPACING.xl), gap: rs(SPACING.sm),
-    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(6) },
-    shadowOpacity: 0.4, shadowRadius: rs(14), elevation: 8,
-  },
-  fabText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });

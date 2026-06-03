@@ -13,17 +13,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AUTH_PERSIST_KEY = 'quotewise_auth_persist';
 
-// Register a new user with email/password
-export async function registerUser(email, password, displayName) {
+// Register a new user with email/password, role, and company name
+export async function registerUser(email, password, displayName, role = 'client', companyName = '') {
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName });
 
-  // Store user info in Firestore
+  // Store user info in Firestore with role and company
   await setDoc(doc(db, 'users', credential.user.uid), {
     uid: credential.user.uid,
     displayName,
     email,
-    role: 'student',
+    role: role || 'client',
+    companyName: companyName || '',
     phone: '',
     createdAt: serverTimestamp(),
   });

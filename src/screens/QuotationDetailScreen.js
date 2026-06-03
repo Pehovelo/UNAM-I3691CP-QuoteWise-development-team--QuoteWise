@@ -5,7 +5,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { updateQuotation, deleteQuotation } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -310,7 +310,7 @@ const s = StyleSheet.create({
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
   shareBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(120) },
+  scrollContent: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xl), paddingBottom: rs(120) + BOTTOM_SAFE },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: rs(SPACING.xxxl) },
   errorText: { fontSize: rs(16), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(SPACING.md) },
   backLink: { marginTop: rs(SPACING.lg) },

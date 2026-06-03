@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn } from '../components/Animations';
 import { getUserProfile, updateUserProfile } from '../services/firestoreService';
 import { updateUserDisplayName, auth } from '../services/authService';
@@ -11,6 +11,7 @@ import { updateUserDisplayName, auth } from '../services/authService';
 export default function EditProfileScreen({ navigation }) {
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,7 @@ export default function EditProfileScreen({ navigation }) {
         if (profile) {
           setDisplayName(profile.displayName || auth.currentUser?.displayName || '');
           setRole(profile.role || '');
+          setCompanyName(profile.companyName || '');
           setPhone(profile.phone || '');
         } else {
           setDisplayName(auth.currentUser?.displayName || '');
@@ -51,6 +53,7 @@ export default function EditProfileScreen({ navigation }) {
       await updateUserProfile(uid, {
         displayName: displayName.trim(),
         role: role.trim(),
+        companyName: companyName.trim(),
         phone: phone.trim(),
       });
       Alert.alert('Profile Updated', 'Your profile has been saved.', [
@@ -113,6 +116,16 @@ export default function EditProfileScreen({ navigation }) {
               </View>
             </FadeSlideIn>
 
+            <FadeSlideIn delay={140}>
+              <View style={s.inputGroup}>
+                <Text style={s.label}>Company / Business Name</Text>
+                <View style={s.inputWrap}>
+                  <Ionicons name="business-outline" size={rs(18)} color={COLORS.inkFaint} style={s.inputIcon} />
+                  <TextInput style={s.input} value={companyName} onChangeText={setCompanyName} placeholder="e.g. Imms Trading CC" placeholderTextColor={COLORS.inkFaint} autoCapitalize="words" />
+                </View>
+              </View>
+            </FadeSlideIn>
+
             <FadeSlideIn delay={180}>
               <View style={s.inputGroup}>
                 <Text style={s.label}>Phone Number</Text>
@@ -143,7 +156,7 @@ const s = StyleSheet.create({
   headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
   backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(60) },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(60) + BOTTOM_SAFE },
 
   // Avatar
   avatarSection: { alignItems: 'center', marginBottom: rs(SPACING.xxxl) },

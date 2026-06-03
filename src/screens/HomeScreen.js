@@ -4,14 +4,17 @@ import {
   StatusBar, ImageBackground, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, width } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, BOTTOM_SAFE, width } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
-import { subscribeQuotationCounts } from '../services/firestoreService';
+import { subscribeQuotationCounts, subscribeQuoteCounts, getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
 
 export default function HomeScreen({ navigation, user }) {
   const [counts, setCounts] = useState({ active: 0, draft: 0, saved: 0, total: 0 });
+  const [quoteCounts, setQuoteCounts] = useState({ open: 0, responded: 0, closed: 0, total: 0 });
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState('client');
+  const [companyName, setCompanyName] = useState('');
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -19,7 +22,17 @@ export default function HomeScreen({ navigation, user }) {
       setCounts(c);
       setLoading(false);
     });
-    return unsub;
+    const unsub2 = subscribeQuoteCounts(user.uid, (c) => {
+      setQuoteCounts(c);
+    });
+    // Load user profile for role
+    getUserProfile(user.uid).then((profile) => {
+      if (profile) {
+        setUserRole(profile.role || 'client');
+        setCompanyName(profile.companyName || '');
+      }
+    });
+    return () => { unsub(); unsub2(); };
   }, [user?.uid]);
 
   const displayName = user?.displayName || (user?.email ? user.email.split('@')[0] : 'QuoteWise');
@@ -27,12 +40,30 @@ export default function HomeScreen({ navigation, user }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'QW';
 
-  const tiles = [
-    { label: 'Quotations', count: counts.active + counts.draft, icon: 'document-text', screen: 'Quotations', color: COLORS.brand, desc: 'Active estimates' },
-    { label: 'Saved', count: counts.saved, icon: 'bookmark', screen: 'Saved', color: COLORS.saved, desc: 'Archived quotes' },
-    { label: 'Drafts', count: counts.draft, icon: 'create', screen: 'Drafts', color: COLORS.draft, desc: 'In progress' },
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  // Client dashboard tiles
+  const clientTiles = [
+    { label: 'My Requests', count: quoteCounts.total, icon: 'document-text', screen: 'Quotations', color: COLORS.brand, desc: 'Your posted projects' },
+    { label: 'Compose', count: null, icon: 'add-circle', screen: 'Compose', color: COLORS.saved, desc: 'Post a new request' },
+    { label: 'Saved', count: counts.saved, icon: 'bookmark', screen: 'Saved', color: COLORS.draft, desc: 'Archived quotes' },
     { label: 'Settings', count: null, icon: 'settings', screen: 'Settings', color: COLORS.inkLight, desc: 'Preferences' },
   ];
+
+  // Provider dashboard tiles
+  const providerTiles = [
+    { label: 'Open Requests', count: quoteCounts.open, icon: 'search', screen: 'Quotations', color: COLORS.brand, desc: 'Available projects' },
+    { label: 'My Quotes', count: quoteCounts.responded, icon: 'send', screen: 'Quotations', color: COLORS.saved, desc: 'Quotations sent' },
+    { label: 'Saved', count: counts.saved, icon: 'bookmark', screen: 'Saved', color: COLORS.draft, desc: 'Archived items' },
+    { label: 'Settings', count: null, icon: 'settings', screen: 'Settings', color: COLORS.inkLight, desc: 'Preferences' },
+  ];
+
+  const tiles = userRole === 'provider' ? providerTiles : clientTiles;
 
   return (
     <View style={s.container}>
@@ -43,8 +74,9 @@ export default function HomeScreen({ navigation, user }) {
             <FadeSlideIn>
               <View style={s.header}>
                 <View>
-                  <Text style={s.greeting}>Good morning</Text>
+                  <Text style={s.greeting}>{greeting()}</Text>
                   <Text style={s.userName}>{displayName}</Text>
+                  {companyName ? <Text style={s.companyName}>{companyName}</Text> : null}
                 </View>
                 <TouchableOpacity
                   style={s.avatar}
@@ -63,20 +95,41 @@ export default function HomeScreen({ navigation, user }) {
       <View style={s.summaryContainer}>
         <FadeSlideIn delay={100} direction="up">
           <View style={s.summaryStrip}>
-            <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : counts.active}</Text>
-              <Text style={s.summaryLabel}>Active</Text>
-            </View>
-            <View style={s.summaryDivider} />
-            <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : counts.draft}</Text>
-              <Text style={s.summaryLabel}>Draft</Text>
-            </View>
-            <View style={s.summaryDivider} />
-            <View style={s.summaryItem}>
-              <Text style={s.summaryNum}>{loading ? '—' : counts.saved}</Text>
-              <Text style={s.summaryLabel}>Saved</Text>
-            </View>
+            {userRole === 'client' ? (
+              <>
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : quoteCounts.open}</Text>
+                  <Text style={s.summaryLabel}>Open</Text>
+                </View>
+                <View style={s.summaryDivider} />
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : quoteCounts.responded}</Text>
+                  <Text style={s.summaryLabel}>Responded</Text>
+                </View>
+                <View style={s.summaryDivider} />
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : counts.draft}</Text>
+                  <Text style={s.summaryLabel}>Draft</Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : quoteCounts.open}</Text>
+                  <Text style={s.summaryLabel}>Available</Text>
+                </View>
+                <View style={s.summaryDivider} />
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : quoteCounts.responded}</Text>
+                  <Text style={s.summaryLabel}>Submitted</Text>
+                </View>
+                <View style={s.summaryDivider} />
+                <View style={s.summaryItem}>
+                  <Text style={s.summaryNum}>{loading ? '—' : counts.saved}</Text>
+                  <Text style={s.summaryLabel}>Saved</Text>
+                </View>
+              </>
+            )}
           </View>
         </FadeSlideIn>
       </View>
@@ -84,7 +137,7 @@ export default function HomeScreen({ navigation, user }) {
       <FadeSlideIn delay={150}>
         <View style={s.sectionHeader}>
           <Text style={s.sectionTitle}>Dashboard</Text>
-          <Text style={s.sectionSub}>Quick access to all sections</Text>
+          <Text style={s.sectionSub}>{userRole === 'provider' ? 'Service Provider' : 'Client Company'}</Text>
         </View>
       </FadeSlideIn>
 
@@ -109,20 +162,6 @@ export default function HomeScreen({ navigation, user }) {
           </FadeSlideIn>
         ))}
       </ScrollView>
-
-      {/* FAB — New Quotation */}
-      <FadeSlideIn delay={400}>
-        <TouchableOpacity
-          style={s.fab}
-          activeOpacity={0.85}
-          onPress={() => navigation.navigate('QuotationForm')}
-          accessibilityRole="button"
-          accessibilityLabel="Create new quotation"
-        >
-          <Ionicons name="add" size={rs(22)} color="#FFFFFF" />
-          <Text style={s.fabText}>New Quote</Text>
-        </TouchableOpacity>
-      </FadeSlideIn>
     </View>
   );
 }
@@ -138,6 +177,7 @@ const s = StyleSheet.create({
   },
   greeting: { fontSize: rs(13), color: 'rgba(255,255,255,0.7)', fontFamily: FONTS.body, textTransform: 'uppercase', letterSpacing: rs(1.5), marginBottom: rs(2) },
   userName: { fontSize: rs(26), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display, letterSpacing: rs(-0.5) },
+  companyName: { fontSize: rs(12), color: 'rgba(255,255,255,0.6)', fontFamily: FONTS.body, marginTop: rs(2) },
   avatar: {
     width: rs(44), height: rs(44), borderRadius: RADII.lg,
     backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: rs(1.5),
@@ -157,9 +197,9 @@ const s = StyleSheet.create({
   summaryDivider: { width: rs(1), backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: rs(SPACING.xs) },
   sectionHeader: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxl), paddingBottom: rs(SPACING.md) },
   sectionTitle: { fontSize: rs(18), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.display, letterSpacing: rs(-0.3) },
-  sectionSub: { fontSize: rs(12), color: COLORS.inkLight, fontFamily: FONTS.body, marginTop: rs(2) },
+  sectionSub: { fontSize: rs(12), color: COLORS.brand, fontFamily: FONTS.body, marginTop: rs(2), fontWeight: '600' },
   tilesScroll: { flex: 1 },
-  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: rs(SPACING.lg), gap: rs(SPACING.md), paddingBottom: rs(SPACING.xxxl) },
+  tilesGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: rs(SPACING.lg), gap: rs(SPACING.md), paddingBottom: rs(100) + BOTTOM_SAFE },
   tileWrapper: { width: (width - rs(44)) / 2 },
   tile: {
     backgroundColor: COLORS.card, borderRadius: RADII.xxl, padding: rs(SPACING.xl),
@@ -174,13 +214,4 @@ const s = StyleSheet.create({
   tileBottom: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   tilePill: { borderRadius: RADII.md, paddingHorizontal: rs(8), paddingVertical: rs(3), minWidth: rs(24), alignItems: 'center' },
   tilePillText: { fontSize: rs(11), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
-  fab: {
-    position: 'absolute', bottom: rs(28), right: rs(SPACING.xl),
-    flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.brand,
-    borderRadius: RADII.xxl, paddingLeft: rs(18), paddingRight: rs(SPACING.xxl),
-    paddingVertical: rs(SPACING.xl), gap: rs(SPACING.sm),
-    shadowColor: COLORS.brand, shadowOffset: { width: 0, height: rs(6) },
-    shadowOpacity: 0.4, shadowRadius: rs(14), elevation: 8,
-  },
-  fabText: { fontSize: rs(15), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
 });

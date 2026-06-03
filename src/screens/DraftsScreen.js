@@ -4,7 +4,7 @@ import {
   StatusBar, ImageBackground, SafeAreaView, Alert, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, IMAGES, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, IMAGES, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { subscribeUserQuotationsByStatus, deleteQuotation } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -143,7 +143,7 @@ const s = StyleSheet.create({
   },
   newBtnText: { fontSize: rs(13), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.body },
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) },
+  scrollContent: { paddingHorizontal: rs(SPACING.xl), paddingTop: rs(SPACING.lg), paddingBottom: rs(100) + BOTTOM_SAFE },
   statsBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: rs(SPACING.lg), paddingHorizontal: rs(SPACING.xs) },
   statsCount: { fontSize: rs(13), color: COLORS.inkLight, fontFamily: FONTS.body, fontWeight: '500' },
   emptyState: { alignItems: 'center', paddingTop: rs(40) },

@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 
 // Screens
 import SplashScreen from '../screens/SplashScreen';
@@ -19,12 +19,17 @@ import SettingsScreen from '../screens/SettingsScreen';
 import QuotationFormScreen from '../screens/QuotationFormScreen';
 import QuotationDetailScreen from '../screens/QuotationDetailScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import ComposePostScreen from '../screens/ComposePostScreen';
+import QuoteResponsesScreen from '../screens/QuoteResponsesScreen';
+import SubmitQuotationScreen from '../screens/SubmitQuotationScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Bottom tab navigator for the main app
 function MainTabs({ user }) {
+  const userRole = user?.role || 'client';
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -36,8 +41,8 @@ function MainTabs({ user }) {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Quotations') {
             iconName = focused ? 'document-text' : 'document-text-outline';
-          } else if (route.name === 'Drafts') {
-            iconName = focused ? 'create' : 'create-outline';
+          } else if (route.name === 'Compose') {
+            iconName = focused ? 'add-circle' : 'add-circle-outline';
           } else if (route.name === 'Saved') {
             iconName = focused ? 'bookmark' : 'bookmark-outline';
           }
@@ -46,7 +51,7 @@ function MainTabs({ user }) {
         tabBarActiveTintColor: COLORS.brand,
         tabBarInactiveTintColor: COLORS.inkFaint,
         tabBarLabelStyle: {
-          fontSize: rs(11),
+          fontSize: rs(10),
           fontFamily: FONTS.body,
           fontWeight: '600',
         },
@@ -54,8 +59,8 @@ function MainTabs({ user }) {
           backgroundColor: COLORS.card,
           borderTopColor: COLORS.cardBorder,
           borderTopWidth: 1,
-          height: rs(64),
-          paddingBottom: rs(8),
+          height: rs(64) + BOTTOM_SAFE,
+          paddingBottom: rs(8) + BOTTOM_SAFE,
           paddingTop: rs(6),
         },
       })}
@@ -66,8 +71,8 @@ function MainTabs({ user }) {
       <Tab.Screen name="Quotations">
         {(props) => <QuotationsScreen {...props} user={user} />}
       </Tab.Screen>
-      <Tab.Screen name="Drafts">
-        {(props) => <DraftsScreen {...props} user={user} />}
+      <Tab.Screen name="Compose">
+        {(props) => <ComposePostScreen {...props} user={user} />}
       </Tab.Screen>
       <Tab.Screen name="Saved">
         {(props) => <SavedScreen {...props} user={user} />}
@@ -103,9 +108,17 @@ export default function AppNavigator({ user, showSplash, onSplashComplete }) {
               {(props) => <SettingsScreen {...props} user={user} />}
             </Stack.Screen>
             <Stack.Screen name="QuotationForm" component={QuotationFormScreen} />
-            <Stack.Screen name="QuotationDetail" component={QuotationDetailScreen} />
+            <Stack.Screen name="QuotationDetail">
+              {(props) => <QuotationDetailScreen {...props} user={user} />}
+            </Stack.Screen>
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="QuoteResponses">
+              {(props) => <QuoteResponsesScreen {...props} user={user} />}
+            </Stack.Screen>
+            <Stack.Screen name="SubmitQuotation">
+              {(props) => <SubmitQuotationScreen {...props} user={user} />}
+            </Stack.Screen>
           </>
         )}
       </Stack.Navigator>

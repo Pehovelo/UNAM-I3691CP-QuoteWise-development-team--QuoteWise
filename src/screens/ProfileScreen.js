@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { getUserProfile } from '../services/firestoreService';
 import { auth } from '../services/authService';
@@ -133,7 +133,7 @@ const s = StyleSheet.create({
   headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.md) },
   backBtn: { width: rs(40), height: rs(40), borderRadius: RADII.md, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: rs(20), fontWeight: '700', color: '#FFFFFF', fontFamily: FONTS.display },
-  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(40) },
+  content: { paddingHorizontal: rs(SPACING.xxl), paddingTop: rs(SPACING.xxxl), paddingBottom: rs(40) + BOTTOM_SAFE },
   avatarSection: { alignItems: 'center', marginBottom: rs(SPACING.xxxl) },
   avatarLarge: {
     width: rs(80), height: rs(80), borderRadius: rs(40), backgroundColor: COLORS.brandGlow,

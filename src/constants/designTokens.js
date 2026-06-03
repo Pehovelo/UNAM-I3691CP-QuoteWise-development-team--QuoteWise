@@ -2,11 +2,15 @@ import { Platform, Dimensions } from 'react-native';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const isIOS = Platform.OS === 'ios';
+const isAndroid = Platform.OS === 'android';
 
 // Responsive scaling based on design baseline (390px wide)
 const BASELINE_WIDTH = 390;
 const scale = Math.min(SCREEN_WIDTH / BASELINE_WIDTH, 1.3); // cap at 1.3 for tablets
 export const rs = (size) => Math.round(size * scale);
+
+// Bottom safe area offset for Android gesture navigation
+export const BOTTOM_SAFE = isAndroid ? rs(12) : 0;
 
 export const COLORS = {
   brand: '#F05A00',
@@ -61,4 +65,4 @@ export const IMAGES = {
   desertShadow: require('../../assets/images/desert_shadow.jpg'),
 };
 
-export { SCREEN_WIDTH as width, SCREEN_HEIGHT as height, isIOS, scale };
+export { SCREEN_WIDTH as width, SCREEN_HEIGHT as height, isIOS, isAndroid, scale };

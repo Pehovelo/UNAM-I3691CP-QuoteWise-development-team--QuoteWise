@@ -4,14 +4,21 @@ import {
   StatusBar, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
+import { COLORS, FONTS, SPACING, RADII, rs, BOTTOM_SAFE } from '../constants/designTokens';
 import { registerUser } from '../services/authService';
+
+const ROLES = [
+  { value: 'client', label: 'Client Company', icon: 'business-outline', desc: 'Post projects and receive quotations' },
+  { value: 'provider', label: 'Service Provider', icon: 'construct-outline', desc: 'View requests and submit quotations' },
+];
 
 export default function RegisterScreen({ navigation }) {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('client');
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,9 +27,10 @@ export default function RegisterScreen({ navigation }) {
     if (!displayName || !email || !password || !confirmPassword) { setError('Please fill in all fields.'); return; }
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     if (password !== confirmPassword) { setError('Passwords do not match.'); return; }
+    if (!companyName.trim()) { setError('Please enter your company or business name.'); return; }
     setLoading(true); setError('');
     try {
-      await registerUser(email.trim(), password, displayName.trim());
+      await registerUser(email.trim(), password, displayName.trim(), role, companyName.trim());
     } catch (err) {
       const msg = err.code === 'auth/email-already-in-use' ? 'This email is already registered.'
         : err.code === 'auth/weak-password' ? 'Password is too weak. Use at least 6 characters.'
@@ -47,6 +55,27 @@ export default function RegisterScreen({ navigation }) {
         <ScrollView contentContainerStyle={s.form} keyboardShouldPersistTaps="handled">
           {error ? <View style={s.errorBox}><Ionicons name="alert-circle" size={rs(16)} color={COLORS.error} /><Text style={s.errorText}>{error}</Text></View> : null}
 
+          {/* Role Selection */}
+          <Text style={s.label}>I am a...</Text>
+          <View style={s.roleRow}>
+            {ROLES.map((r) => (
+              <TouchableOpacity
+                key={r.value}
+                style={[s.roleCard, role === r.value && s.roleCardActive]}
+                onPress={() => setRole(r.value)}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel={r.label}
+              >
+                <View style={[s.roleIconWrap, role === r.value && s.roleIconWrapActive]}>
+                  <Ionicons name={r.icon} size={rs(22)} color={role === r.value ? '#FFFFFF' : COLORS.brand} />
+                </View>
+                <Text style={[s.roleLabel, role === r.value && s.roleLabelActive]}>{r.label}</Text>
+                <Text style={s.roleDesc}>{r.desc}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           <View style={s.inputGroup}>
             <Text style={s.label}>Full Name</Text>
             <View style={s.inputWrap}>
@@ -54,6 +83,15 @@ export default function RegisterScreen({ navigation }) {
               <TextInput style={s.input} value={displayName} onChangeText={setDisplayName} placeholder="John Doe" placeholderTextColor={COLORS.inkFaint} autoCapitalize="words" accessibilityLabel="Full name" />
             </View>
           </View>
+
+          <View style={s.inputGroup}>
+            <Text style={s.label}>{role === 'client' ? 'Company Name' : 'Business Name'}</Text>
+            <View style={s.inputWrap}>
+              <Ionicons name="business-outline" size={rs(18)} color={COLORS.inkFaint} style={s.inputIcon} />
+              <TextInput style={s.input} value={companyName} onChangeText={setCompanyName} placeholder={role === 'client' ? 'e.g. Imms Trading CC' : 'e.g. Namibia Plumbers'} placeholderTextColor={COLORS.inkFaint} autoCapitalize="words" accessibilityLabel="Company name" />
+            </View>
+          </View>
+
           <View style={s.inputGroup}>
             <Text style={s.label}>Email Address</Text>
             <View style={s.inputWrap}>
@@ -102,7 +140,26 @@ const s = StyleSheet.create({
   headerTitle: { fontSize: rs(26), fontWeight: '800', color: '#FFFFFF', fontFamily: FONTS.display },
   headerSub: { fontSize: rs(14), color: 'rgba(255,255,255,0.75)', fontFamily: FONTS.body, marginTop: 4 },
   formWrap: { flex: 1 },
-  form: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: 40 },
+  form: { paddingHorizontal: SPACING.xxl, paddingTop: SPACING.xxl, paddingBottom: 40 + BOTTOM_SAFE },
+
+  // Role selection
+  roleRow: { flexDirection: 'row', gap: rs(SPACING.md), marginBottom: rs(SPACING.xl) },
+  roleCard: {
+    flex: 1, backgroundColor: COLORS.card, borderRadius: RADII.xl, padding: rs(SPACING.lg),
+    borderWidth: rs(1.5), borderColor: COLORS.cardBorder, alignItems: 'center',
+  },
+  roleCardActive: { borderColor: COLORS.brand, backgroundColor: COLORS.brandGlow },
+  roleIconWrap: {
+    width: rs(44), height: rs(44), borderRadius: RADII.md,
+    backgroundColor: COLORS.brandGlow, alignItems: 'center', justifyContent: 'center',
+    marginBottom: rs(SPACING.sm),
+  },
+  roleIconWrapActive: { backgroundColor: COLORS.brand },
+  roleLabel: { fontSize: rs(13), fontWeight: '700', color: COLORS.ink, fontFamily: FONTS.body, textAlign: 'center', marginBottom: rs(4) },
+  roleLabelActive: { color: COLORS.brand },
+  roleDesc: { fontSize: rs(10), color: COLORS.inkLight, fontFamily: FONTS.body, textAlign: 'center', lineHeight: rs(14) },
+
+  // Form
   errorBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.errorBg, borderRadius: RADII.md, padding: SPACING.md, marginBottom: SPACING.lg, borderWidth: 1, borderColor: 'rgba(220,38,38,0.15)', gap: SPACING.sm },
   errorText: { color: COLORS.error, fontSize: rs(13), fontFamily: FONTS.body, flex: 1 },
   inputGroup: { marginBottom: SPACING.lg },
