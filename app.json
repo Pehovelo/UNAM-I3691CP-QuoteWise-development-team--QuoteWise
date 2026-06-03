@@ -24,14 +24,11 @@
       "bundleIdentifier": "com.quotewise.app"
     },
     "android": {
-      "name": "QuoteWise",
       "adaptiveIcon": {
         "backgroundColor": "#F05A00",
         "foregroundImage": "./assets/android-icon-foreground.png"
       },
-      "package": "com.quotewise.app",
-      "softwareMenuBar": false,
-      "allowBackup": false
+      "package": "com.quotewise.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

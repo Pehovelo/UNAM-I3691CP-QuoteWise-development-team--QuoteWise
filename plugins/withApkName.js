@@ -13,9 +13,15 @@ function withApkName(config) {
     const version = config.version || '1.0.0';
     const baseName = `${appName}-${version}`;
 
+    // Guard: modContents may be undefined in some EAS build environments
+    const modContents = config.modContents;
+    if (!modContents || typeof modContents !== 'string') {
+      return config;
+    }
+
     // Only inject archivesBaseName once
-    if (!config.modContents.includes('archivesBaseName')) {
-      config.modContents = config.modContents.replace(
+    if (!modContents.includes('archivesBaseName')) {
+      config.modContents = modContents.replace(
         /defaultConfig\s*\{/,
         `defaultConfig {\n        archivesBaseName = "${baseName}"`
       );
