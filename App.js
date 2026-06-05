@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
-import { onAuthChange, wasUserLoggedIn, getCachedUser } from './src/services/authService';
+import { onAuthChange, getCachedUser } from './src/services/authService';
 import { getUserProfile } from './src/services/firestoreService';
 
 export default function App() {
@@ -28,7 +28,7 @@ export default function App() {
             setUserRole(profile.role);
           }
         } catch (e) {
-          // If Firestore fails (e.g. rules not deployed), try cached profile
+          // If Firestore fails, try cached profile
           try {
             const cached = await getCachedUser();
             if (cached?.role) setUserRole(cached.role);
@@ -38,23 +38,7 @@ export default function App() {
         }
         setUser(firebaseUser);
       } else {
-        // User is NOT authenticated
-        // Check if user was previously logged in (cold start with slow Firebase restore)
-        const wasLoggedIn = await wasUserLoggedIn();
-        if (wasLoggedIn) {
-          // Firebase auth is still restoring from AsyncStorage persistence
-          // Keep showing splash — the onAuthStateChanged listener will fire again
-          // If after 3 seconds still no user, then proceed to login screen
-          setTimeout(() => {
-            setInitializing((prev) => {
-              if (prev) {
-                // Firebase auth restore timeout — proceed to login screen
-              }
-              return false;
-            });
-          }, 3000);
-          return; // Don't set user to null yet
-        }
+        // User is NOT authenticated — show login screen immediately
         setUser(null);
         setUserRole('client');
       }

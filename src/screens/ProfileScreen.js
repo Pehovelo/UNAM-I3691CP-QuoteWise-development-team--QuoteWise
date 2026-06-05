@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ActivityIndicator,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, SafeAreaView, ActivityIndicator, Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONTS, SPACING, RADII, rs } from '../constants/designTokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FadeSlideIn, PressableCard } from '../components/Animations';
 import { getUserProfile } from '../services/firestoreService';
+import { logoutUser } from '../services/authService';
 import { auth } from '../services/firebaseConfig';
 
 export default function ProfileScreen({ navigation, user }) {
@@ -122,6 +123,23 @@ export default function ProfileScreen({ navigation, user }) {
                 <Ionicons name="chevron-forward" size={rs(20)} color={COLORS.inkFaint} />
               </PressableCard>
             </FadeSlideIn>
+
+            <FadeSlideIn delay={300}>
+              <PressableCard
+                onPress={() => {
+                  Alert.alert('Sign Out', 'Switch to a different account?', [
+                    { text: 'Cancel', style: 'cancel' },
+                    { text: 'Sign Out', style: 'destructive', onPress: async () => {
+                      try { await logoutUser(); } catch (e) { /* handled by auth listener */ }
+                    }},
+                  ]);
+                }}
+                style={s.signOutCard}
+              >
+                <Ionicons name="log-out-outline" size={rs(22)} color={COLORS.error} />
+                <Text style={s.signOutLabel}>Sign Out</Text>
+              </PressableCard>
+            </FadeSlideIn>
           </>
         )}
       </ScrollView>
@@ -164,4 +182,11 @@ const s = StyleSheet.create({
     shadowRadius: rs(8), elevation: 2, marginBottom: rs(SPACING.md),
   },
   navCardLabel: { fontSize: rs(16), fontWeight: '600', color: COLORS.ink, fontFamily: FONTS.body, flex: 1, marginLeft: rs(SPACING.md) },
+  signOutCard: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: COLORS.errorBg, borderRadius: RADII.xxl,
+    padding: rs(SPACING.xl), borderWidth: rs(1), borderColor: 'rgba(220,38,38,0.15)',
+    marginTop: rs(SPACING.xl),
+  },
+  signOutLabel: { fontSize: rs(16), fontWeight: '700', color: COLORS.error, fontFamily: FONTS.body, marginLeft: rs(SPACING.sm) },
 });

@@ -58,11 +58,23 @@ export async function loginUser(email, password) {
   return credential.user;
 }
 
-// Logout
+// Logout — clears Firebase session, all caches, and persisted flags
 export async function logoutUser() {
   await signOut(auth);
-  await AsyncStorage.removeItem(AUTH_PERSIST_KEY);
-  await AsyncStorage.removeItem(USER_CACHE_KEY);
+  // Clear ALL quotewise keys from AsyncStorage (auth flags + cached data)
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const qwKeys = keys.filter(k =>
+      k.startsWith('quotewise_') || k.startsWith('qw_cache_')
+    );
+    if (qwKeys.length > 0) {
+      await AsyncStorage.multiRemove(qwKeys);
+    }
+  } catch (e) {
+    // Fallback: remove the critical keys individually
+    await AsyncStorage.removeItem(AUTH_PERSIST_KEY);
+    await AsyncStorage.removeItem(USER_CACHE_KEY);
+  }
 }
 
 // Send password reset email
