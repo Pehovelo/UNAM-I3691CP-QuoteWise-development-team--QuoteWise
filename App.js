@@ -7,7 +7,7 @@ import { getUserProfile } from './src/services/firestoreService';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [initializing, setInitializing] = useState(true) ;
+  const [initializing, setInitializing] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
   const [userRole, setUserRole] = useState('client');
   const initialized = useRef(false);
