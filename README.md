@@ -166,7 +166,7 @@ eas build --platform android --profile preview
 - [x] Empty state with atmospheric background
 - [x] Navigation via useState (no React Navigation dependency)
 - [x] EAS Build for Android APK
-- [ ] Firebase Authentication
+- [ ] Firebase Authentication 
 - [ ] Firestore integration for quotation storage
 - [ ] Fiber (Go) backend API connection
 - [ ] Quotation creation and editing flow
