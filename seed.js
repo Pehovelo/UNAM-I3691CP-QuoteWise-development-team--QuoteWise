@@ -18,7 +18,9 @@ const firebaseConfig = {
   messagingSenderId: "513688695839",
   appId: "1:513688695839:web:de4eff61f3b94decccd12a",
 };
-
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 
 // ─── Seed Data: Quotes Collection (marketplace) ─────────────────────
