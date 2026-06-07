@@ -1,7 +1,7 @@
 #!/bin/bash
 # setup-firebase.sh — QuoteWise Firebase Setup Script
 # Run this script ONCE to configure Firebase for the app.
-#
+# 
 # Prerequisites:
 #   - Node.js 18+ installed
 #   - A Google account with access to the Firebase project
