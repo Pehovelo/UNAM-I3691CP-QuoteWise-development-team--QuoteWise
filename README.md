@@ -11,7 +11,7 @@
 - **Save and archive** — finalized estimates stored for audit and retrieval
 - **Draft quotations** — work-in-progress estimates before submission
 
-The app features a premium, warm design language inspired by modern fintech applications, with a deep orange brand color (#F05A00), cream surfaces (#FFFAF7), staggered entrance animations, and architectural photography that reflects the construction industry.
+The app features a premium, warm design language inspired by modern fintech applications, with a deep orange brand color (#F05A00), cream surfaces (#FFFAF7), staggered entrance animations, and architectural photography that reflects the construction industry. 
 
 ---
 
@@ -24,7 +24,7 @@ The app features a premium, warm design language inspired by modern fintech appl
 | 3 | Lasarus Shiyelekeni | 224030698 | Lead Developer |
 | 4 | Wilhelm WS Moses | 224096389 | Lead Developer Assistant |
 | 5 | Benhard Handura | 225153238 | Firebase Lead |
-| 6 | Erikson Shapwa | 222068841 | Firebase Assistant |
+| 6 | Erikson Shapwa | 222068841 | Firebase Assistant|
 | 7 | Veikko Shikage | 225066866 | UI/UX Lead |
 | 8 | Kandjimwena Dison | 225072572 | UI/UX Assistant |
 | 9 | Lavmo Shiweda | 225051532 | Documentation Lead |
