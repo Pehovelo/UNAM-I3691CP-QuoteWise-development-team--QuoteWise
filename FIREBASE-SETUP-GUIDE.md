@@ -34,7 +34,13 @@ This creates:
 - 4 provider responses
 
 ---
+## 📱 Demo Accounts
 
+| Role     | Email                    | Password | Name              | Company                  |
+|----------|--------------------------|----------|-------------------|--------------------------|
+| Client   | client@quotewise.com     | demo1234 | Amina Geingob     | Namibia Construction CC  |
+| Provider | provider@quotewise.com   | demo1234 | Johan Pretorius   | Desert Sun Services      |
+| Provider | provider2@quotewise.com  | demo1234 | Lina Ndapanda     | Windhoek Plumbing Pros   |
 
 
 ---
