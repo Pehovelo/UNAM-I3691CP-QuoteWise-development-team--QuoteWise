@@ -1,4 +1,5 @@
-# QuoteWise — Firebase Setup Guide
+# QuoteWise — Firebase Setup Guide 
+
 
 ## 🔥 CRITICAL: You must do these 2 things to make the backend work
 
